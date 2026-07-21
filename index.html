@@ -13,12 +13,11 @@
   <div id="authScreen" class="auth-screen">
     <div class="auth-container">
       <div class="auth-logo">
-        <img id="authLogo" class="school-logo" src="logo.png" alt="شعار المدرسة">
+        <i class="fas fa-graduation-cap"></i>
       </div>
       <h1 class="auth-title">إعدادية القاهرة المهنية الرائدة</h1>
       <p class="auth-subtitle">تسجيل الدخول إلى المنصة التعليمية</p>
 
-      <!-- نموذج تسجيل الدخول -->
       <form id="loginForm" class="auth-form active-form">
         <div class="input-group">
           <i class="fas fa-user"></i>
@@ -33,7 +32,6 @@
         <p class="auth-switch">ليس لديك حساب؟ <a href="#" onclick="showRegister()">إنشاء حساب جديد</a></p>
       </form>
 
-      <!-- نموذج إنشاء حساب -->
       <form id="registerForm" class="auth-form">
         <div class="input-group">
           <i class="fas fa-user"></i>
@@ -52,6 +50,15 @@
           <i class="fas fa-lock"></i>
           <input type="password" id="regConfirm" placeholder="تأكيد كلمة المرور" required>
         </div>
+        <div class="input-group">
+          <div class="photo-upload" onclick="document.getElementById('regPhoto').click()">
+            <div class="photo-preview" id="photoPreview">
+              <i class="fas fa-camera"></i>
+              <span>إضافة صورة شخصية</span>
+            </div>
+          </div>
+          <input type="file" id="regPhoto" accept="image/*" onchange="previewPhoto(event)" hidden>
+        </div>
         <button type="submit" class="auth-btn">إنشاء الحساب</button>
         <p class="auth-switch">لديك حساب بالفعل؟ <a href="#" onclick="showLogin()">تسجيل الدخول</a></p>
       </form>
@@ -61,53 +68,47 @@
   <!-- ===== التطبيق الرئيسي ===== -->
   <div id="mainApp" class="main-app hidden">
 
-    <!-- الشريط العلوي -->
     <header class="app-header">
       <div class="header-content">
-        <img id="headerLogo" class="header-logo-img" src="logo.png" alt="شعار المدرسة">
+        <i class="fas fa-graduation-cap header-logo"></i>
         <h2>القاهرة المهنية الرائدة</h2>
         <i class="fas fa-bell notification-bell"></i>
       </div>
     </header>
 
-    <!-- محتوى الصفحات -->
     <div class="page-content">
 
-      <!-- ===== صفحة الرئيسية ===== -->
+      <!-- ===== الصفحة الرئيسية ===== -->
       <section id="page-home" class="page active-page">
         <div class="welcome-section">
-          <div class="welcome-card">
+          <div class="welcome-card glass-card">
             <h3>مرحباً بك في مدرستنا</h3>
             <p>إعدادية القاهرة المهنية الرائدة - حيث يلتقي العلم بالمهارة</p>
           </div>
         </div>
-
-        <div class="section-title">
-          <h3>الأقسام المهنية</h3>
-        </div>
-
+        <div class="section-title"><h3>الأقسام المهنية</h3></div>
         <div class="departments-grid">
-          <div class="dept-card" style="--dept-color: #00bcd4;" onclick="openDepartment('cyber')">
+          <div class="dept-card glass-card" style="--dept-color: #00bcd4;" onclick="openDepartment('cyber')">
             <div class="dept-icon"><i class="fas fa-shield-alt"></i></div>
             <h4>الأمن السيبراني</h4>
             <p>حماية المعلومات والشبكات من الاختراقات الإلكترونية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #ff5722;" onclick="openDepartment('hardware')">
+          <div class="dept-card glass-card" style="--dept-color: #ff5722;" onclick="openDepartment('hardware')">
             <div class="dept-icon"><i class="fas fa-desktop"></i></div>
             <h4>تجميع الحاسوب</h4>
             <p>صيانة وتجميع مكونات الحاسوب وتشخيص الأعطال</p>
           </div>
-          <div class="dept-card" style="--dept-color: #4caf50;" onclick="openDepartment('mechanics')">
+          <div class="dept-card glass-card" style="--dept-color: #4caf50;" onclick="openDepartment('mechanics')">
             <div class="dept-icon"><i class="fas fa-cogs"></i></div>
             <h4>ميكانيك الأجهزة</h4>
             <p>صيانة وإصلاح الأجهزة الإلكترونية والميكانيكية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #9c27b0;" onclick="openDepartment('mechatronics')">
+          <div class="dept-card glass-card" style="--dept-color: #9c27b0;" onclick="openDepartment('mechatronics')">
             <div class="dept-icon"><i class="fas fa-robot"></i></div>
             <h4>ميكاترونكس</h4>
             <p>دمج الهندسة الميكانيكية والكهربائية والإلكترونية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #e91e63;" onclick="openDepartment('laser')">
+          <div class="dept-card glass-card" style="--dept-color: #e91e63;" onclick="openDepartment('laser')">
             <div class="dept-icon"><i class="fas fa-light fa-laser"></i></div>
             <h4>أدوات الليزر</h4>
             <p>استخدام تقنيات الليزر في التطبيقات الصناعية والطبية</p>
@@ -117,53 +118,19 @@
 
       <!-- ===== صفحة الأخبار ===== -->
       <section id="page-news" class="page">
-        <div class="section-title">
-          <h3>آخر الأخبار</h3>
-        </div>
-        <div class="news-list">
-          <div class="news-card">
-            <div class="news-badge">جديد</div>
-            <h4>افتتاح معمل الأمن السيبراني</h4>
-            <p>تم افتتاح أحدث معمل للأمن السيبراني برعاية وزارة التربية</p>
-            <span class="news-date">٢٠ يوليو ٢٠٢٦</span>
-          </div>
-          <div class="news-card">
-            <div class="news-badge">مهم</div>
-            <h4>نتائج الامتحانات النهائية</h4>
-            <p>يمكنكم الآن الاستعلام عن نتائج الامتحانات عبر المنصة</p>
-            <span class="news-date">١٥ يوليو ٢٠٢٦</span>
-          </div>
-          <div class="news-card">
-            <div class="news-badge">فعالية</div>
-            <h4>مسابقة الروبوتات السنوية</h4>
-            <p>تعلن المدرسة عن مسابقة الروبوتات لطلاب قسم الميكاترونكس</p>
-            <span class="news-date">١٠ يوليو ٢٠٢٦</span>
-          </div>
-          <div class="news-card">
-            <div class="news-badge">إعلان</div>
-            <h4>دورة تدريبية في الليزر</h4>
-            <p>تسجيل الآن في الدورة التدريبية المتقدمة لأدوات الليزر</p>
-            <span class="news-date">٥ يوليو ٢٠٢٦</span>
-          </div>
-        </div>
+        <div class="section-title"><h3>آخر الأخبار</h3></div>
+        <div class="news-list" id="newsList"></div>
       </section>
 
       <!-- ===== صفحة الدردشة ===== -->
       <section id="page-chat" class="page">
-        <div class="section-title">
-          <h3>الدردشة الجماعية</h3>
-        </div>
-        <div class="chat-container">
+        <div class="section-title"><h3>الدردشة الجماعية</h3></div>
+        <div class="chat-container glass-card">
           <div class="chat-messages" id="chatMessages">
             <div class="chat-msg received">
               <span class="msg-user">مشرف المدرسة</span>
               <p>مرحباً بكم في غرفة الدردشة المدرسية</p>
               <span class="msg-time">١٠:٣٠ ص</span>
-            </div>
-            <div class="chat-msg received">
-              <span class="msg-user">أحمد علي</span>
-              <p>هل هناك أي أخبار عن الامتحانات؟</p>
-              <span class="msg-time">١٠:٣١ ص</span>
             </div>
           </div>
           <div class="chat-input-area">
@@ -175,27 +142,18 @@
 
       <!-- ===== صفحة حسابي ===== -->
       <section id="page-account" class="page">
-        <div class="profile-header">
-          <div class="profile-avatar">
+        <div class="profile-header glass-card">
+          <div class="profile-avatar" id="profileAvatar">
             <i class="fas fa-user-graduate"></i>
           </div>
           <h3 id="profileName">الطالب</h3>
           <p id="profileEmail">student@school.com</p>
+          <div class="profile-qr" id="profileQR"></div>
         </div>
-        <div class="profile-menu">
-          <div class="profile-item">
-            <i class="fas fa-user-edit"></i>
-            <span>تعديل الملف الشخصي</span>
-            <i class="fas fa-chevron-left"></i>
-          </div>
-          <div class="profile-item">
-            <i class="fas fa-bell"></i>
-            <span>الإشعارات</span>
-            <i class="fas fa-chevron-left"></i>
-          </div>
-          <div class="profile-item">
-            <i class="fas fa-cog"></i>
-            <span>الإعدادات</span>
+        <div class="profile-menu glass-card">
+          <div class="profile-item" onclick="navigateTo('admin-dashboard')">
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="admin-dashboard-link">لوحة التحكم</span>
             <i class="fas fa-chevron-left"></i>
           </div>
           <div class="profile-item" onclick="logout()">
@@ -215,63 +173,130 @@
             <h3 id="deptDetailName">القسم</h3>
           </div>
         </div>
-
         <div class="dept-tabs">
           <button class="dept-tab active" onclick="switchDeptTab('subjects')" data-tab="subjects">
-            <i class="fas fa-book"></i>
-            <span>المواد الدراسية</span>
+            <i class="fas fa-book"></i><span>المواد الدراسية</span>
           </button>
           <button class="dept-tab" onclick="switchDeptTab('schedule')" data-tab="schedule">
-            <i class="fas fa-calendar-alt"></i>
-            <span>الجدول الأسبوعي</span>
+            <i class="fas fa-calendar-alt"></i><span>الجدول الأسبوعي</span>
           </button>
-          <button class="dept-tab" onclick="switchDeptTab('grades')" data-tab="grades">
-            <i class="fas fa-star"></i>
-            <span>درجات الامتحانات</span>
+          <button class="dept-tab" onclick="switchDeptTab('exams')" data-tab="exams">
+            <i class="fas fa-file-alt"></i><span>الامتحانات</span>
           </button>
         </div>
-
         <div class="dept-tab-content">
-          <!-- المواد الدراسية -->
           <div id="deptSubjects" class="dept-tab-panel active-panel">
             <div class="stage-tabs" id="stageTabs"></div>
             <div class="subjects-list" id="subjectsList"></div>
           </div>
-
-          <!-- الجدول الأسبوعي -->
           <div id="deptSchedule" class="dept-tab-panel">
             <div class="schedule-container" id="scheduleContainer"></div>
           </div>
-
-          <!-- درجات الامتحانات -->
-          <div id="deptGrades" class="dept-tab-panel">
-            <div class="grades-container" id="gradesContainer"></div>
+          <div id="deptExams" class="dept-tab-panel">
+            <div class="exams-container" id="examsContainer"></div>
           </div>
         </div>
       </section>
+
+      <!-- ===== لوحة التحكم ===== -->
+      <section id="page-admin-dashboard" class="page">
+        <div class="admin-header">
+          <button class="back-btn" onclick="navigateTo('account')"><i class="fas fa-arrow-right"></i></button>
+          <h3>لوحة التحكم</h3>
+          <span class="admin-badge" id="adminBadge">مسؤول</span>
+        </div>
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchAdminTab('news')" data-admin-tab="news">
+            <i class="fas fa-newspaper"></i><span>الأخبار</span>
+          </button>
+          <button class="admin-tab" onclick="switchAdminTab('students')" data-admin-tab="students">
+            <i class="fas fa-users"></i><span>الطلاب</span>
+          </button>
+          <button class="admin-tab" onclick="switchAdminTab('exams')" data-admin-tab="exams">
+            <i class="fas fa-file-alt"></i><span>الامتحانات</span>
+          </button>
+          <button class="admin-tab" onclick="switchAdminTab('attendance')" data-admin-tab="attendance">
+            <i class="fas fa-clipboard-check"></i><span>الحضور</span>
+          </button>
+          <button class="admin-tab" onclick="switchAdminTab('cards')" data-admin-tab="cards">
+            <i class="fas fa-id-card"></i><span>البطاقات</span>
+          </button>
+        </div>
+        <div class="admin-content">
+          <!-- الأخبار -->
+          <div id="adminPanelNews" class="admin-panel active-panel">
+            <button class="admin-add-btn" onclick="showAddNewsModal()"><i class="fas fa-plus"></i> إضافة خبر</button>
+            <div id="adminNewsList"></div>
+          </div>
+          <!-- الطلاب -->
+          <div id="adminPanelStudents" class="admin-panel">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="studentSearch" placeholder="بحث عن طالب..." oninput="renderAdminStudents()">
+            </div>
+            <div id="adminStudentsList"></div>
+          </div>
+          <!-- الامتحانات -->
+          <div id="adminPanelExams" class="admin-panel">
+            <button class="admin-add-btn" onclick="showAddExamModal()"><i class="fas fa-plus"></i> إضافة امتحان</button>
+            <div id="adminExamsList"></div>
+          </div>
+          <!-- الحضور -->
+          <div id="adminPanelAttendance" class="admin-panel">
+            <button class="admin-add-btn scanner-btn" onclick="openScanner()"><i class="fas fa-qrcode"></i> مسح QR للحضور</button>
+            <div class="search-box">
+              <i class="fas fa-filter"></i>
+              <select id="attendanceFilter" onchange="renderAdminAttendance()"><option value="all">كل الطلاب</option></select>
+            </div>
+            <div id="adminAttendanceList"></div>
+          </div>
+          <!-- البطاقات -->
+          <div id="adminPanelCards" class="admin-panel">
+            <div class="card-generator">
+              <div class="search-box">
+                <i class="fas fa-user"></i>
+                <select id="cardStudentSelect" onchange="generateStudentCard()"><option value="">اختر طالباً</option></select>
+              </div>
+              <div id="studentCardDisplay"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== الماسح الضوئي QR ===== -->
+      <section id="page-scanner" class="page">
+        <div class="admin-header">
+          <button class="back-btn" onclick="stopScanner(); navigateTo('admin-dashboard')"><i class="fas fa-arrow-right"></i></button>
+          <h3>مسح QR للحضور</h3>
+        </div>
+        <div class="scanner-body">
+          <div id="scannerReader"></div>
+          <div id="scannerStatus" class="scanner-status">جاري تشغيل الكاميرا...</div>
+          <div id="scannerResult" class="scanner-result"></div>
+        </div>
+      </section>
+
     </div>
 
     <!-- ===== القائمة السفلية ===== -->
     <nav class="bottom-nav">
       <div class="nav-item active" data-page="home" onclick="navigateTo('home')">
-        <i class="fas fa-home"></i>
-        <span>الرئيسية</span>
+        <i class="fas fa-home"></i><span>الرئيسية</span>
       </div>
       <div class="nav-item" data-page="news" onclick="navigateTo('news')">
-        <i class="fas fa-newspaper"></i>
-        <span>الأخبار</span>
+        <i class="fas fa-newspaper"></i><span>الأخبار</span>
       </div>
       <div class="nav-item" data-page="chat" onclick="navigateTo('chat')">
-        <i class="fas fa-comments"></i>
-        <span>الدردشة</span>
+        <i class="fas fa-comments"></i><span>الدردشة</span>
       </div>
       <div class="nav-item" data-page="account" onclick="navigateTo('account')">
-        <i class="fas fa-user"></i>
-        <span>حسابي</span>
+        <i class="fas fa-user"></i><span>حسابي</span>
       </div>
     </nav>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

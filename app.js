@@ -1,4 +1,3 @@
-// ===== عناصر DOM =====
 const authScreen = document.getElementById('authScreen');
 const mainApp = document.getElementById('mainApp');
 const loginForm = document.getElementById('loginForm');
@@ -8,28 +7,28 @@ const chatInput = document.getElementById('chatInput');
 const chatSendBtn = document.getElementById('chatSendBtn');
 const profileName = document.getElementById('profileName');
 const profileEmail = document.getElementById('profileEmail');
+const profileAvatar = document.getElementById('profileAvatar');
+const profileQR = document.getElementById('profileQR');
 
 const USERS_KEY = 'cairo_school_users';
 const CURRENT_USER_KEY = 'cairo_school_current';
+const NEWS_KEY = 'cairo_school_news';
+const EXAMS_KEY = 'cairo_school_exams';
+const ATTENDANCE_KEY = 'cairo_school_attendance';
 
-// ===== المستخدمون =====
-function getUsers() {
-  return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-}
+let scannerInstance = null;
 
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
+function getUsers() { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
+function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+function getCurrentUser() { return JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || 'null'); }
+function saveCurrentUser(user) { localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user)); }
+function getNews() { return JSON.parse(localStorage.getItem(NEWS_KEY) || '[]'); }
+function saveNews(items) { localStorage.setItem(NEWS_KEY, JSON.stringify(items)); }
+function getExams() { return JSON.parse(localStorage.getItem(EXAMS_KEY) || '[]'); }
+function saveExams(items) { localStorage.setItem(EXAMS_KEY, JSON.stringify(items)); }
+function getAttendance() { return JSON.parse(localStorage.getItem(ATTENDANCE_KEY) || '[]'); }
+function saveAttendance(items) { localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(items)); }
 
-function getCurrentUser() {
-  return JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || 'null');
-}
-
-function saveCurrentUser(user) {
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-}
-
-// ===== تسجيل الدخول =====
 function showRegister() {
   loginForm.classList.remove('active-form');
   registerForm.classList.add('active-form');
@@ -61,18 +60,29 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 3000);
 }
 
+function previewPhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = `<img src="${e.target.result}" alt="الصورة">`;
+    preview.classList.add('has-image');
+    preview.dataset.photo = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
-
   const users = getUsers();
   const user = users.find(u => u.email === email && u.password === password);
   if (!user) {
     showToast('⚠️ البريد الإلكتروني أو كلمة المرور غير صحيحة');
     return;
   }
-
   saveCurrentUser(user);
   enterApp(user);
   loginForm.reset();
@@ -84,17 +94,17 @@ registerForm.addEventListener('submit', (e) => {
   const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPassword').value.trim();
   const confirm = document.getElementById('regConfirm').value.trim();
+  const photoPreview = document.getElementById('photoPreview');
+  const photo = photoPreview.dataset.photo || '';
 
   if (!name || !email || !password) {
     showToast('⚠️ يرجى ملء جميع الحقول');
     return;
   }
-
   if (password.length < 6) {
     showToast('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
     return;
   }
-
   if (password !== confirm) {
     showToast('⚠️ كلمة المرور غير متطابقة');
     return;
@@ -106,7 +116,9 @@ registerForm.addEventListener('submit', (e) => {
     return;
   }
 
-  const newUser = { name, email, password };
+  const isAdmin = users.length === 0;
+  const newUser = { name, email, password, photo, isAdmin };
+
   users.push(newUser);
   saveUsers(users);
   saveCurrentUser(newUser);
@@ -114,14 +126,55 @@ registerForm.addEventListener('submit', (e) => {
   showToast('✅ تم إنشاء الحساب بنجاح!');
   enterApp(newUser);
   registerForm.reset();
+  photoPreview.innerHTML = '<i class="fas fa-camera"></i><span>إضافة صورة شخصية</span>';
+  photoPreview.classList.remove('has-image');
+  delete photoPreview.dataset.photo;
 });
 
 function enterApp(user) {
   authScreen.classList.add('hidden');
   mainApp.classList.remove('hidden');
+  updateProfileUI(user);
+  initSampleData();
+  navigateTo('home');
+}
+
+function updateProfileUI(user) {
   profileName.textContent = user.name;
   profileEmail.textContent = user.email;
-  navigateTo('home');
+
+  if (user.photo) {
+    profileAvatar.innerHTML = `<img src="${user.photo}" alt="${user.name}">`;
+  } else {
+    profileAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  }
+
+  profileQR.innerHTML = '';
+  if (typeof QRCode !== 'undefined') {
+    try {
+      new QRCode(profileQR, {
+        text: JSON.stringify({ email: user.email, name: user.name }),
+        width: 100,
+        height: 100,
+        colorDark: '#0d1b2a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch (e) { /* qr library not loaded yet */ }
+  }
+
+  const badge = document.getElementById('adminBadge');
+  if (badge) {
+    badge.textContent = user.isAdmin ? 'مسؤول' : 'طالب';
+    badge.style.background = user.isAdmin ? 'var(--accent)' : 'rgba(255,255,255,0.2)';
+  }
+
+  const adminLink = document.querySelector('.admin-dashboard-link');
+  if (adminLink) {
+    adminLink.textContent = user.isAdmin ? 'لوحة التحكم' : 'لوحة التحكم (طلاب)';
+  }
+
+  populateAdminSelects();
 }
 
 function logout() {
@@ -131,23 +184,72 @@ function logout() {
   showToast('✅ تم تسجيل الخروج');
 }
 
-// ===== التنقل =====
 function navigateTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
   const targetPage = document.getElementById(`page-${page}`);
   const targetNav = document.querySelector(`.nav-item[data-page="${page}"]`);
   if (targetPage) targetPage.classList.add('active-page');
   if (targetNav) targetNav.classList.add('active');
+
+  if (page === 'news') renderNews();
+  if (page === 'account') {
+    const user = getCurrentUser();
+    if (user) updateProfileUI(user);
+  }
+  if (page === 'admin-dashboard') {
+    switchAdminTab('news');
+    populateAdminSelects();
+  }
 }
 
-// ===== بيانات الأقسام المهنية (مراحل + روابط PDF) =====
+function initSampleData() {
+  if (!localStorage.getItem(NEWS_KEY)) {
+    saveNews([
+      { id: 'n1', title: 'افتتاح معمل الأمن السيبراني', content: 'تم افتتاح أحدث معمل للأمن السيبراني برعاية وزارة التربية', image: '', badge: 'جديد', date: '٢٠ يوليو ٢٠٢٦' },
+      { id: 'n2', title: 'نتائج الامتحانات النهائية', content: 'يمكنكم الآن الاستعلام عن نتائج الامتحانات عبر المنصة', image: '', badge: 'مهم', date: '١٥ يوليو ٢٠٢٦' },
+      { id: 'n3', title: 'مسابقة الروبوتات السنوية', content: 'تعلن المدرسة عن مسابقة الروبوتات لطلاب قسم الميكاترونكس', image: '', badge: 'فعالية', date: '١٠ يوليو ٢٠٢٦' },
+      { id: 'n4', title: 'دورة تدريبية في الليزر', content: 'تسجيل الآن في الدورة التدريبية المتقدمة لأدوات الليزر', image: '', badge: 'إعلان', date: '٥ يوليو ٢٠٢٦' }
+    ]);
+  }
+  if (!localStorage.getItem(EXAMS_KEY)) {
+    const sampleExams = [
+      { id: 'e1', name: 'امتحان أمن الشبكات النهائي', pdfLink: '#', department: 'cyber', stage: 'second', date: '٢٠٢٦/٠٧/٢٠' },
+      { id: 'e2', name: 'امتحان تشفير البيانات', pdfLink: '#', department: 'cyber', stage: 'second', date: '٢٠٢٦/٠٧/١٥' },
+      { id: 'e3', name: 'اختبار اختراق عملي', pdfLink: '#', department: 'cyber', stage: 'third', date: '٢٠٢٦/٠٧/٢٥' },
+      { id: 'e4', name: 'امتحان صيانة الحاسوب', pdfLink: '#', department: 'hardware', stage: 'second', date: '٢٠٢٦/٠٧/٢٠' },
+      { id: 'e5', name: 'امتحان ميكانيكا عامة', pdfLink: '#', department: 'mechanics', stage: 'second', date: '٢٠٢٦/٠٧/١٨' },
+      { id: 'e6', name: 'امتحان إلكترونيات', pdfLink: '#', department: 'mechatronics', stage: 'second', date: '٢٠٢٦/٠٧/٢٢' },
+      { id: 'e7', name: 'امتحان فيزياء الليزر', pdfLink: '#', department: 'laser', stage: 'second', date: '٢٠٢٦/٠٧/١٩' }
+    ];
+    saveExams(sampleExams);
+  }
+}
+
+function renderNews() {
+  const container = document.getElementById('newsList');
+  const items = getNews();
+  if (items.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:40px;">لا توجد أخبار حالياً</p>';
+    return;
+  }
+  container.innerHTML = items.map(n => `
+    <div class="news-card ${n.image ? 'has-image' : ''}">
+      ${n.image ? `<img class="news-card-img" src="${n.image}" alt="${n.title}">` : ''}
+      <div class="${n.image ? 'news-card-body' : ''}">
+        <div class="news-badge">${n.badge || 'خبر'}</div>
+        <h4>${n.title}</h4>
+        <p>${n.content}</p>
+        <span class="news-date">${n.date}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== التنقل في الأقسام =====
 const departmentsData = {
   cyber: {
-    name: 'الأمن السيبراني',
-    icon: 'fa-shield-alt',
-    color: '#00bcd4',
+    name: 'الأمن السيبراني', icon: 'fa-shield-alt', color: '#00bcd4',
     stages: {
       first: [
         { name: 'أساسيات الحاسوب', desc: 'مبادئ الحاسوب ونظام التشغيل', icon: 'fa-laptop', pdf: '#' },
@@ -178,26 +280,10 @@ const departmentsData = {
       { period: 'الحصة الرابعة', time: '١٠:٣٠ - ١١:١٥', days: { sun: 'أنظمة آمنة', mon: 'اختبار اختراق', tue: 'أنظمة آمنة', wed: 'قوانين', thu: 'تشفير' } },
       { period: 'الحصة الخامسة', time: '١١:٣٠ - ١٢:١٥', days: { sun: 'قوانين', mon: 'قوانين', tue: 'اختبار اختراق', wed: 'أنظمة آمنة', thu: 'أنظمة آمنة' } },
       { period: 'الحصة السادسة', time: '١٢:١٥ - ١:٠٠', days: { sun: 'تطبيقات', mon: 'تطبيقات', tue: 'تطبيقات', wed: 'تطبيقات', thu: 'تطبيقات' } }
-    ],
-    grades: [
-      { student: 'أحمد محمد', subject: 'أمن الشبكات', score: 92, status: 'passed' },
-      { student: 'أحمد محمد', subject: 'تشفير البيانات', score: 88, status: 'passed' },
-      { student: 'أحمد محمد', subject: 'اختبار الاختراق', score: 95, status: 'passed' },
-      { student: 'سارة خالد', subject: 'أمن الشبكات', score: 78, status: 'passed' },
-      { student: 'سارة خالد', subject: 'تشفير البيانات', score: 85, status: 'passed' },
-      { student: 'سارة خالد', subject: 'اختبار الاختراق', score: 72, status: 'passed' },
-      { student: 'عمر حسن', subject: 'أمن الشبكات', score: 65, status: 'passed' },
-      { student: 'عمر حسن', subject: 'تشفير البيانات', score: 58, status: 'failed' },
-      { student: 'عمر حسن', subject: 'اختبار الاختراق', score: 70, status: 'passed' },
-      { student: 'نورة أحمد', subject: 'أمن الشبكات', score: 97, status: 'passed' },
-      { student: 'نورة أحمد', subject: 'تشفير البيانات', score: 91, status: 'passed' },
-      { student: 'نورة أحمد', subject: 'اختبار الاختراق', score: 89, status: 'passed' }
     ]
   },
   hardware: {
-    name: 'تجميع الحاسوب',
-    icon: 'fa-desktop',
-    color: '#ff5722',
+    name: 'تجميع الحاسوب', icon: 'fa-desktop', color: '#ff5722',
     stages: {
       first: [
         { name: 'أساسيات الكهرباء', desc: 'مبادئ الكهرباء والتيار المستمر', icon: 'fa-bolt', pdf: '#' },
@@ -228,26 +314,10 @@ const departmentsData = {
       { period: 'الحصة الرابعة', time: '١٠:٣٠ - ١١:١٥', days: { sun: 'إلكترونيات', mon: 'تركيب أنظمة', tue: 'تشخيص', wed: 'شبكات', thu: 'تركيب أنظمة' } },
       { period: 'الحصة الخامسة', time: '١١:٣٠ - ١٢:١٥', days: { sun: 'تشخيص', mon: 'تشخيص', tue: 'إلكترونيات', wed: 'تركيب أنظمة', thu: 'شبكات' } },
       { period: 'الحصة السادسة', time: '١٢:١٥ - ١:٠٠', days: { sun: 'تطبيقات', mon: 'تطبيقات', tue: 'تطبيقات', wed: 'تطبيقات', thu: 'تطبيقات' } }
-    ],
-    grades: [
-      { student: 'خالد علي', subject: 'صيانة الحاسوب', score: 90, status: 'passed' },
-      { student: 'خالد علي', subject: 'شبكات الحاسوب', score: 85, status: 'passed' },
-      { student: 'خالد علي', subject: 'تركيب الأنظمة', score: 78, status: 'passed' },
-      { student: 'مريم سامي', subject: 'صيانة الحاسوب', score: 95, status: 'passed' },
-      { student: 'مريم سامي', subject: 'شبكات الحاسوب', score: 88, status: 'passed' },
-      { student: 'مريم سامي', subject: 'تركيب الأنظمة', score: 92, status: 'passed' },
-      { student: 'يوسف عمر', subject: 'صيانة الحاسوب', score: 55, status: 'failed' },
-      { student: 'يوسف عمر', subject: 'شبكات الحاسوب', score: 62, status: 'passed' },
-      { student: 'يوسف عمر', subject: 'تركيب الأنظمة', score: 48, status: 'failed' },
-      { student: 'هدى عادل', subject: 'صيانة الحاسوب', score: 88, status: 'passed' },
-      { student: 'هدى عادل', subject: 'شبكات الحاسوب', score: 93, status: 'passed' },
-      { student: 'هدى عادل', subject: 'تركيب الأنظمة', score: 87, status: 'passed' }
     ]
   },
   mechanics: {
-    name: 'ميكانيك الأجهزة',
-    icon: 'fa-cogs',
-    color: '#4caf50',
+    name: 'ميكانيك الأجهزة', icon: 'fa-cogs', color: '#4caf50',
     stages: {
       first: [
         { name: 'أساسيات الميكانيكا', desc: 'مبادئ الميكانيكا والقوى الحركية', icon: 'fa-wrench', pdf: '#' },
@@ -278,26 +348,10 @@ const departmentsData = {
       { period: 'الحصة الرابعة', time: '١٠:٣٠ - ١١:١٥', days: { sun: 'صيانة', mon: 'تبريد', tue: 'كهرباء', wed: 'رسم', thu: 'تبريد' } },
       { period: 'الحصة الخامسة', time: '١١:٣٠ - ١٢:١٥', days: { sun: 'رسم', mon: 'صيانة', tue: 'رسم', wed: 'ميكانيكا', thu: 'كهرباء' } },
       { period: 'الحصة السادسة', time: '١٢:١٥ - ١:٠٠', days: { sun: 'تطبيقات', mon: 'تطبيقات', tue: 'تطبيقات', wed: 'تطبيقات', thu: 'تطبيقات' } }
-    ],
-    grades: [
-      { student: 'أحمد كريم', subject: 'ميكانيكا عامة', score: 82, status: 'passed' },
-      { student: 'أحمد كريم', subject: 'كهرباء الأجهزة', score: 76, status: 'passed' },
-      { student: 'أحمد كريم', subject: 'تبريد وتكييف', score: 70, status: 'passed' },
-      { student: 'ليلى محمود', subject: 'ميكانيكا عامة', score: 94, status: 'passed' },
-      { student: 'ليلى محمود', subject: 'كهرباء الأجهزة', score: 91, status: 'passed' },
-      { student: 'ليلى محمود', subject: 'تبريد وتكييف', score: 96, status: 'passed' },
-      { student: 'سامي جابر', subject: 'ميكانيكا عامة', score: 60, status: 'passed' },
-      { student: 'سامي جابر', subject: 'كهرباء الأجهزة', score: 54, status: 'failed' },
-      { student: 'سامي جابر', subject: 'تبريد وتكييف', score: 67, status: 'passed' },
-      { student: 'رنا فادي', subject: 'ميكانيكا عامة', score: 87, status: 'passed' },
-      { student: 'رنا فادي', subject: 'كهرباء الأجهزة', score: 83, status: 'passed' },
-      { student: 'رنا فادي', subject: 'تبريد وتكييف', score: 79, status: 'passed' }
     ]
   },
   mechatronics: {
-    name: 'ميكاترونكس',
-    icon: 'fa-robot',
-    color: '#9c27b0',
+    name: 'ميكاترونكس', icon: 'fa-robot', color: '#9c27b0',
     stages: {
       first: [
         { name: 'أساسيات الإلكترونيات', desc: 'مبادئ الإلكترونيات والدوائر', icon: 'fa-microchip', pdf: '#' },
@@ -328,26 +382,10 @@ const departmentsData = {
       { period: 'الحصة الرابعة', time: '١٠:٣٠ - ١١:١٥', days: { sun: 'استشعار', mon: 'روبوتات', tue: 'ميكانيكا', wed: 'برمجة', thu: 'روبوتات' } },
       { period: 'الحصة الخامسة', time: '١١:٣٠ - ١٢:١٥', days: { sun: 'ميكانيكا', mon: 'استشعار', tue: 'إلكترونيات', wed: 'ميكانيكا', thu: 'إلكترونيات' } },
       { period: 'الحصة السادسة', time: '١٢:١٥ - ١:٠٠', days: { sun: 'تطبيقات', mon: 'تطبيقات', tue: 'تطبيقات', wed: 'تطبيقات', thu: 'تطبيقات' } }
-    ],
-    grades: [
-      { student: 'زياد أنور', subject: 'إلكترونيات', score: 86, status: 'passed' },
-      { student: 'زياد أنور', subject: 'برمجة تحكم', score: 90, status: 'passed' },
-      { student: 'زياد أنور', subject: 'روبوتات', score: 94, status: 'passed' },
-      { student: 'دينا فؤاد', subject: 'إلكترونيات', score: 73, status: 'passed' },
-      { student: 'دينا فؤاد', subject: 'برمجة تحكم', score: 68, status: 'passed' },
-      { student: 'دينا فؤاد', subject: 'روبوتات', score: 81, status: 'passed' },
-      { student: 'باسل هاني', subject: 'إلكترونيات', score: 49, status: 'failed' },
-      { student: 'باسل هاني', subject: 'برمجة تحكم', score: 55, status: 'failed' },
-      { student: 'باسل هاني', subject: 'روبوتات', score: 61, status: 'passed' },
-      { student: 'سلمى ناصر', subject: 'إلكترونيات', score: 96, status: 'passed' },
-      { student: 'سلمى ناصر', subject: 'برمجة تحكم', score: 92, status: 'passed' },
-      { student: 'سلمى ناصر', subject: 'روبوتات', score: 98, status: 'passed' }
     ]
   },
   laser: {
-    name: 'أدوات الليزر',
-    icon: 'fa-light fa-laser',
-    color: '#e91e63',
+    name: 'أدوات الليزر', icon: 'fa-light fa-laser', color: '#e91e63',
     stages: {
       first: [
         { name: 'أساسيات البصريات', desc: 'مبادئ الضوء والبصريات', icon: 'fa-eye', pdf: '#' },
@@ -378,69 +416,34 @@ const departmentsData = {
       { period: 'الحصة الرابعة', time: '١٠:٣٠ - ١١:١٥', days: { sun: 'بصريات', mon: 'أمن', tue: 'تطبيقات', wed: 'فيزياء', thu: 'أمن' } },
       { period: 'الحصة الخامسة', time: '١١:٣٠ - ١٢:١٥', days: { sun: 'صيانة', mon: 'بصريات', tue: 'صيانة', wed: 'صيانة', thu: 'فيزياء' } },
       { period: 'الحصة السادسة', time: '١٢:١٥ - ١:٠٠', days: { sun: 'تطبيقات', mon: 'تطبيقات', tue: 'تطبيقات', wed: 'تطبيقات', thu: 'تطبيقات' } }
-    ],
-    grades: [
-      { student: 'فارس علاء', subject: 'فيزياء الليزر', score: 91, status: 'passed' },
-      { student: 'فارس علاء', subject: 'تطبيقات الليزر', score: 95, status: 'passed' },
-      { student: 'فارس علاء', subject: 'أمن وسلامة', score: 88, status: 'passed' },
-      { student: 'هند رامي', subject: 'فيزياء الليزر', score: 77, status: 'passed' },
-      { student: 'هند رامي', subject: 'تطبيقات الليزر', score: 82, status: 'passed' },
-      { student: 'هند رامي', subject: 'أمن وسلامة', score: 74, status: 'passed' },
-      { student: 'ماجد سامر', subject: 'فيزياء الليزر', score: 52, status: 'failed' },
-      { student: 'ماجد سامر', subject: 'تطبيقات الليزر', score: 63, status: 'passed' },
-      { student: 'ماجد سامر', subject: 'أمن وسلامة', score: 58, status: 'failed' },
-      { student: 'لينا جمال', subject: 'فيزياء الليزر', score: 89, status: 'passed' },
-      { student: 'لينا جمال', subject: 'تطبيقات الليزر', score: 93, status: 'passed' },
-      { student: 'لينا جمال', subject: 'أمن وسلامة', score: 86, status: 'passed' }
     ]
   }
 };
 
-const dayNames = {
-  sun: 'الأحد',
-  mon: 'الإثنين',
-  tue: 'الثلاثاء',
-  wed: 'الأربعاء',
-  thu: 'الخميس'
-};
-
+const dayNames = { sun: 'الأحد', mon: 'الإثنين', tue: 'الثلاثاء', wed: 'الأربعاء', thu: 'الخميس' };
 const dayOrder = ['sun', 'mon', 'tue', 'wed', 'thu'];
+const stageLabels = { first: 'المرحلة الأولى', second: 'المرحلة الثانية', third: 'المرحلة الثالثة' };
+const stageIcons = { first: 'fa-1', second: 'fa-2', third: 'fa-3' };
 
-const stageLabels = {
-  first: 'المرحلة الأولى',
-  second: 'المرحلة الثانية',
-  third: 'المرحلة الثالثة'
-};
-
-const stageIcons = {
-  first: 'fa-1',
-  second: 'fa-2',
-  third: 'fa-3'
-};
-
+const deptKeys = { cyber: 'cyber', hardware: 'hardware', mechanics: 'mechanics', mechatronics: 'mechatronics', laser: 'laser' };
 let currentStage = 'first';
 
 function openDepartment(id) {
   const data = departmentsData[id];
   if (!data) return;
-
   const headerIcon = document.getElementById('deptDetailIcon');
   const headerName = document.getElementById('deptDetailName');
-
   headerIcon.innerHTML = `<i class="fas ${data.icon}"></i>`;
   headerName.textContent = data.name;
-  document.getElementById('deptDetailHeader').style.background =
-    `linear-gradient(135deg, ${data.color}dd, ${data.color}88)`;
-
+  headerName.dataset.deptKey = id;
+  document.getElementById('deptDetailHeader').style.background = `linear-gradient(135deg, ${data.color}dd, ${data.color}88)`;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
   document.getElementById('page-department').classList.add('active-page');
-
   currentStage = 'first';
   renderStageTabs(data);
   renderSubjects(data);
   renderSchedule(data);
-  renderGrades(data);
-
+  renderDeptExams(id);
   switchDeptTab('subjects');
 }
 
@@ -466,20 +469,26 @@ function getCurrentDepartmentData() {
   return Object.values(departmentsData).find(d => d.name === name);
 }
 
+function getCurrentDeptKey() {
+  return document.getElementById('deptDetailName').dataset.deptKey || '';
+}
+
+function getDeptKeyByName(name) {
+  for (const [key, val] of Object.entries(departmentsData)) {
+    if (val.name === name) return key;
+  }
+  return '';
+}
+
 function renderSubjects(data) {
   const list = document.getElementById('subjectsList');
   const subjects = data.stages[currentStage];
   if (!subjects) { list.innerHTML = ''; return; }
-
   const colors = ['#00bcd4', '#ff5722', '#4caf50', '#9c27b0', '#e91e63'];
-
   list.innerHTML = subjects.map((s, i) => `
     <div class="subject-card" style="--subject-color: ${colors[i % colors.length]}" onclick="openPDF('${encodeURIComponent(s.pdf)}')">
       <div class="subject-icon"><i class="fas ${s.icon}"></i></div>
-      <div class="subject-info">
-        <h4>${s.name}</h4>
-        <p>${s.desc}</p>
-      </div>
+      <div class="subject-info"><h4>${s.name}</h4><p>${s.desc}</p></div>
       <div class="subject-download"><i class="fas fa-file-pdf"></i></div>
     </div>
   `).join('');
@@ -490,34 +499,21 @@ function openPDF(url) {
     showToast('📚 سيتم إضافة رابط تحميل PDF قريباً');
     return;
   }
-  window.open(url, '_blank');
+  window.open(decodeURIComponent(url), '_blank');
 }
 
 function renderSchedule(data) {
   const container = document.getElementById('scheduleContainer');
-
-  let table = `
-    <table class="schedule-table">
-      <thead>
-        <tr>
-          <th>الفترة</th>
-          ${dayOrder.map(d => `<th>${dayNames[d]}</th>`).join('')}
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
+  let table = `<table class="schedule-table"><thead><tr><th>الفترة</th>${dayOrder.map(d => `<th>${dayNames[d]}</th>`).join('')}</tr></thead><tbody>`;
   data.schedule.forEach(row => {
-    table += `<tr>
-      <td class="period-label">${row.period}<span class="period-time">${row.time}</span></td>
-      ${dayOrder.map(d => {
-        const subj = row.days[d];
-        const color = getSubjectColor(subj, data.color);
-        return `<td><span class="subject-tag" style="--tag-color: ${color}">${subj}</span></td>`;
-      }).join('')}
-    </tr>`;
+    table += `<tr><td class="period-label">${row.period}<span class="period-time">${row.time}</span></td>`;
+    dayOrder.forEach(d => {
+      const subj = row.days[d];
+      const color = getSubjectColor(subj, data.color);
+      table += `<td><span class="subject-tag" style="--tag-color: ${color}">${subj}</span></td>`;
+    });
+    table += '</tr>';
   });
-
   table += '</tbody></table>';
   container.innerHTML = table;
 }
@@ -535,67 +531,58 @@ function getSubjectColor(name, defaultColor) {
   return colors[name] || defaultColor;
 }
 
-function renderGrades(data) {
-  const container = document.getElementById('gradesContainer');
+function renderDeptExams(deptKey) {
+  const container = document.getElementById('examsContainer');
+  const allExams = getExams();
+  const deptExams = allExams.filter(e => e.department === deptKey);
+  const currentUser = getCurrentUser();
+  const isAdmin = currentUser && currentUser.isAdmin;
 
-  let table = `
-    <table class="grades-table">
-      <thead>
-        <tr>
-          <th>الطالب</th>
-          <th>المادة</th>
-          <th>الدرجة</th>
-          <th>الحالة</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+  if (deptExams.length === 0) {
+    container.innerHTML = '<div class="no-exams">لا توجد امتحانات لهذا القسم حالياً</div>';
+    return;
+  }
 
-  data.grades.forEach(g => {
-    const scoreClass = g.score >= 85 ? 'high' : g.score >= 60 ? 'mid' : 'low';
-    const statusText = g.status === 'passed' ? 'ناجح' : 'راسب';
-    table += `<tr>
-      <td>${g.student}</td>
-      <td>${g.subject}</td>
-      <td class="grade-score ${scoreClass}">${g.score}</td>
-      <td><span class="grade-status ${g.status}">${statusText}</span></td>
-    </tr>`;
-  });
-
-  table += '</tbody></table>';
-  container.innerHTML = table;
+  container.innerHTML = deptExams.map(exam => `
+    <div class="exam-card">
+      <div class="exam-icon"><i class="fas fa-file-alt"></i></div>
+      <div class="exam-info">
+        <h4>${exam.name}</h4>
+        <p>${exam.date} · ${stageLabels[exam.stage] || exam.stage}</p>
+        <div class="exam-stage">${exam.pdfLink && exam.pdfLink !== '#' ? '📄 رابط PDF متوفر' : '📄 رابط PDF قريباً'}</div>
+      </div>
+      ${exam.pdfLink && exam.pdfLink !== '#' ? `<div class="exam-link" onclick="openPDF('${encodeURIComponent(exam.pdfLink)}')"><i class="fas fa-file-pdf"></i></div>` : ''}
+      ${isAdmin ? `
+      <div class="exam-admin-actions">
+        <button class="exam-edit-btn" onclick="showEditExamModal('${exam.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="exam-delete-btn" onclick="deleteExam('${exam.id}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </div>` : ''}
+    </div>
+  `).join('');
 }
 
 function switchDeptTab(tab) {
   document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.dept-tab-panel').forEach(p => p.classList.remove('active-panel'));
-
   const tabBtn = document.querySelector(`.dept-tab[data-tab="${tab}"]`);
   if (tabBtn) tabBtn.classList.add('active');
-
-  const tabMap = { subjects: 'deptSubjects', schedule: 'deptSchedule', grades: 'deptGrades' };
+  const tabMap = { subjects: 'deptSubjects', schedule: 'deptSchedule', exams: 'deptExams' };
   const panel = document.getElementById(tabMap[tab]);
   if (panel) panel.classList.add('active-panel');
 }
 
-function closeDepartment() {
-  navigateTo('home');
-}
+function closeDepartment() { navigateTo('home'); }
 
 // ===== الدردشة =====
 chatSendBtn.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') sendMessage();
-});
+chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
 function sendMessage() {
   const text = chatInput.value.trim();
   if (!text) return;
-
   const user = getCurrentUser();
   const now = new Date();
   const time = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
-
   const div = document.createElement('div');
   div.className = 'chat-msg sent';
   div.innerHTML = `<span class="msg-user">${user ? user.name : 'أنت'}</span><p>${escapeHtml(text)}</p><span class="msg-time">${time}</span>`;
@@ -610,9 +597,455 @@ function escapeHtml(text) {
   return d.innerHTML;
 }
 
+// ===== لوحة التحكم =====
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active-panel'));
+  const tabBtn = document.querySelector(`.admin-tab[data-admin-tab="${tab}"]`);
+  if (tabBtn) tabBtn.classList.add('active');
+  const panel = document.getElementById(`adminPanel${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+  if (panel) panel.classList.add('active-panel');
+  if (tab === 'news') renderAdminNews();
+  if (tab === 'students') renderAdminStudents();
+  if (tab === 'exams') renderAdminExams();
+  if (tab === 'attendance') renderAdminAttendance();
+  if (tab === 'cards') populateCardSelect();
+}
+
+function populateAdminSelects() {
+  const users = getUsers();
+  const filter = document.getElementById('attendanceFilter');
+  const cardSelect = document.getElementById('cardStudentSelect');
+  if (filter) {
+    const curVal = filter.value;
+    filter.innerHTML = '<option value="all">كل الطلاب</option>' + users.map(u => `<option value="${u.email}" ${u.email === curVal ? 'selected' : ''}>${u.name}</option>`).join('');
+  }
+  if (cardSelect) {
+    const curVal2 = cardSelect.value;
+    cardSelect.innerHTML = '<option value="">اختر طالباً</option>' + users.map(u => `<option value="${u.email}" ${u.email === curVal2 ? 'selected' : ''}>${u.name}</option>`).join('');
+  }
+}
+
+// ===== إدارة الأخبار =====
+function renderAdminNews() {
+  const container = document.getElementById('adminNewsList');
+  const items = getNews();
+  if (items.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:30px;">لا توجد أخبار. أضف أول خبر الآن!</p>';
+    return;
+  }
+  container.innerHTML = items.map(n => `
+    <div class="news-admin-card">
+      <div class="news-admin-thumb">${n.image ? `<img src="${n.image}" alt="">` : '<i class="fas fa-newspaper"></i>'}</div>
+      <div class="news-admin-info">
+        <h4>${n.title}</h4>
+        <p>${n.content}</p>
+        <span style="font-size:10px;color:var(--text-light);">${n.date} · ${n.badge || 'خبر'}</span>
+      </div>
+      <div class="news-admin-actions">
+        <button class="exam-edit-btn" onclick="showEditNewsModal('${n.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="exam-delete-btn" onclick="deleteNews('${n.id}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showAddNewsModal() { showNewsModal(null); }
+function showEditNewsModal(id) { showNewsModal(id); }
+
+function showNewsModal(editId) {
+  let item = null;
+  if (editId) {
+    const items = getNews();
+    item = items.find(n => n.id === editId);
+  }
+  const isEdit = !!item;
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-content">
+      <h3>${isEdit ? 'تعديل الخبر' : 'إضافة خبر جديد'}</h3>
+      <div class="input-group"><input type="text" id="modalNewsTitle" placeholder="عنوان الخبر" value="${isEdit ? escapeHtml(item.title) : ''}"></div>
+      <div class="input-group"><textarea id="modalNewsContent" placeholder="محتوى الخبر">${isEdit ? escapeHtml(item.content) : ''}</textarea></div>
+      <div class="input-group"><input type="text" id="modalNewsBadge" placeholder="الوسم (مثل: جديد، مهم)" value="${isEdit ? escapeHtml(item.badge) : ''}"></div>
+      <div class="input-group">
+        <label style="display:block;font-size:12px;color:var(--text-light);margin-bottom:6px;">صورة الخبر (اختياري)</label>
+        <input type="file" id="modalNewsImage" accept="image/*">
+        ${isEdit && item.image ? `<div style="margin-top:8px;"><img src="${item.image}" style="max-width:100px;border-radius:8px;"></div>` : ''}
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn-primary" onclick="saveNewsModal('${editId || ''}')">${isEdit ? 'حفظ التعديلات' : 'إضافة'}</button>
+        <button class="modal-btn-secondary" onclick="closeModal(this)">إلغاء</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function saveNewsModal(editId) {
+  const title = document.getElementById('modalNewsTitle').value.trim();
+  const content = document.getElementById('modalNewsContent').value.trim();
+  const badge = document.getElementById('modalNewsBadge').value.trim() || 'خبر';
+  const fileInput = document.getElementById('modalNewsImage');
+  const items = getNews();
+
+  if (!title || !content) { showToast('⚠️ يرجى ملء عنوان الخبر ومحتواه'); return; }
+
+  const process = (image) => {
+    if (editId) {
+      const idx = items.findIndex(n => n.id === editId);
+      if (idx !== -1) {
+        items[idx] = { ...items[idx], title, content, badge, image: image || items[idx].image };
+        saveNews(items);
+        showToast('✅ تم تحديث الخبر');
+      }
+    } else {
+      const newItem = { id: 'n' + Date.now(), title, content, badge, image: image || '', date: new Date().toLocaleDateString('ar-EG') };
+      items.push(newItem);
+      saveNews(items);
+      showToast('✅ تم إضافة الخبر');
+    }
+    closeModal(document.querySelector('.modal-overlay'));
+    renderAdminNews();
+    renderNews();
+  };
+
+  if (fileInput && fileInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) { process(e.target.result); };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    process('');
+  }
+}
+
+function deleteNews(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا الخبر؟')) return;
+  let items = getNews();
+  items = items.filter(n => n.id !== id);
+  saveNews(items);
+  showToast('🗑️ تم حذف الخبر');
+  renderAdminNews();
+  renderNews();
+}
+
+// ===== إدارة الطلاب =====
+function renderAdminStudents() {
+  const container = document.getElementById('adminStudentsList');
+  const query = (document.getElementById('studentSearch').value || '').trim().toLowerCase();
+  let users = getUsers();
+  if (query) {
+    users = users.filter(u => u.name.toLowerCase().includes(query) || u.email.toLowerCase().includes(query));
+  }
+  if (users.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:30px;">' + (query ? 'لا توجد نتائج بحث' : 'لا يوجد طلاب مسجلون') + '</p>';
+    return;
+  }
+  container.innerHTML = users.map(u => `
+    <div class="student-item">
+      <div class="student-avatar">${u.photo ? `<img src="${u.photo}" alt="">` : '<i class="fas fa-user-graduate"></i>'}</div>
+      <div class="student-info">
+        <h4>${u.name}</h4>
+        <p>${u.email}</p>
+      </div>
+      <span class="student-role ${u.isAdmin ? 'admin-role' : ''}">${u.isAdmin ? 'مسؤول' : 'طالب'}</span>
+    </div>
+  `).join('');
+}
+
+// ===== إدارة الامتحانات =====
+function renderAdminExams() {
+  const container = document.getElementById('adminExamsList');
+  const allExams = getExams();
+  if (allExams.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:30px;">لا توجد امتحانات. أضف أول امتحان الآن!</p>';
+    return;
+  }
+  container.innerHTML = allExams.map(exam => {
+    const deptName = departmentsData[exam.department] ? departmentsData[exam.department].name : exam.department;
+    return `
+    <div class="exam-admin-card">
+      <div class="exam-admin-info">
+        <h4>${exam.name}</h4>
+        <p>${deptName} · ${stageLabels[exam.stage] || exam.stage} · ${exam.date}</p>
+        <span style="font-size:10px;color:var(--accent);">${exam.pdfLink && exam.pdfLink !== '#' ? '📄 رابط PDF متوفر' : '📄 بدون رابط PDF'}</span>
+      </div>
+      <div class="exam-admin-actions">
+        <button class="exam-edit-btn" onclick="showEditExamModal('${exam.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+        <button class="exam-delete-btn" onclick="deleteExam('${exam.id}')" title="حذف"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showAddExamModal() { showExamModal(null); }
+function showEditExamModal(id) { showExamModal(id); }
+
+function showExamModal(editId) {
+  let item = null;
+  if (editId) {
+    const items = getExams();
+    item = items.find(e => e.id === editId);
+  }
+  const isEdit = !!item;
+  const deptOptions = Object.entries(departmentsData).map(([key, val]) =>
+    `<option value="${key}" ${isEdit && item.department === key ? 'selected' : ''}>${val.name}</option>`
+  ).join('');
+  const stageOpts = Object.entries(stageLabels).map(([key, val]) =>
+    `<option value="${key}" ${isEdit && item.stage === key ? 'selected' : ''}>${val}</option>`
+  ).join('');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-content">
+      <h3>${isEdit ? 'تعديل الامتحان' : 'إضافة امتحان جديد'}</h3>
+      <div class="input-group"><input type="text" id="modalExamName" placeholder="اسم الامتحان" value="${isEdit ? escapeHtml(item.name) : ''}"></div>
+      <div class="input-group">
+        <select id="modalExamDept">${deptOptions}</select>
+      </div>
+      <div class="input-group">
+        <select id="modalExamStage">${stageOpts}</select>
+      </div>
+      <div class="input-group"><input type="text" id="modalExamPdf" placeholder="رابط PDF (أو # إن لم يتوفر)" value="${isEdit ? escapeHtml(item.pdfLink) : ''}"></div>
+      <div class="input-group"><input type="text" id="modalExamDate" placeholder="التاريخ" value="${isEdit ? escapeHtml(item.date) : new Date().toLocaleDateString('ar-EG')}"></div>
+      <div class="modal-actions">
+        <button class="modal-btn-primary" onclick="saveExamModal('${editId || ''}')">${isEdit ? 'حفظ التعديلات' : 'إضافة'}</button>
+        <button class="modal-btn-secondary" onclick="closeModal(this)">إلغاء</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function saveExamModal(editId) {
+  const name = document.getElementById('modalExamName').value.trim();
+  const department = document.getElementById('modalExamDept').value;
+  const stage = document.getElementById('modalExamStage').value;
+  const pdfLink = document.getElementById('modalExamPdf').value.trim() || '#';
+  const date = document.getElementById('modalExamDate').value.trim();
+  if (!name) { showToast('⚠️ يرجى إدخال اسم الامتحان'); return; }
+  const items = getExams();
+  if (editId) {
+    const idx = items.findIndex(e => e.id === editId);
+    if (idx !== -1) {
+      items[idx] = { ...items[idx], name, department, stage, pdfLink, date };
+      saveExams(items);
+      showToast('✅ تم تحديث الامتحان');
+    }
+  } else {
+    const newItem = { id: 'e' + Date.now(), name, department, stage, pdfLink, date };
+    items.push(newItem);
+    saveExams(items);
+    showToast('✅ تم إضافة الامتحان');
+  }
+  closeModal(document.querySelector('.modal-overlay'));
+  renderAdminExams();
+  renderDeptExams(getCurrentDeptKey());
+}
+
+function deleteExam(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا الامتحان؟')) return;
+  let items = getExams();
+  items = items.filter(e => e.id !== id);
+  saveExams(items);
+  showToast('🗑️ تم حذف الامتحان');
+  renderAdminExams();
+  renderDeptExams(getCurrentDeptKey());
+}
+
+// ===== نظام الحضور =====
+function renderAdminAttendance() {
+  const container = document.getElementById('adminAttendanceList');
+  const filter = document.getElementById('attendanceFilter');
+  const filterVal = filter ? filter.value : 'all';
+  let records = getAttendance();
+  if (filterVal !== 'all') {
+    records = records.filter(r => r.studentEmail === filterVal);
+  }
+  if (records.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:30px;">لا توجد سجلات حضور. استخدم الماسح الضوئي لتسجيل الحضور!</p>';
+    return;
+  }
+  records.reverse();
+  container.innerHTML = records.map(r => `
+    <div class="attendance-item">
+      <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
+      <div class="student-info">
+        <h4>${r.studentName}</h4>
+        <p>${r.date} · <span class="attendance-time">${r.time}</span></p>
+      </div>
+      <span class="attendance-status present">✅ حاضر</span>
+    </div>
+  `).join('');
+}
+
+// ===== الماسح الضوئي =====
+function openScanner() {
+  navigateTo('scanner');
+  document.getElementById('scannerStatus').textContent = 'جاري تشغيل الكاميرا...';
+  document.getElementById('scannerResult').className = 'scanner-result';
+  document.getElementById('scannerResult').textContent = '';
+  startScanner();
+}
+
+function startScanner() {
+  const readerEl = document.getElementById('scannerReader');
+  readerEl.innerHTML = '';
+  if (typeof Html5Qrcode === 'undefined') {
+    document.getElementById('scannerStatus').textContent = '⚠️ مكتبة المسح غير متوفرة';
+    return;
+  }
+  try {
+    scannerInstance = new Html5Qrcode("scannerReader");
+    scannerInstance.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      onScanSuccess,
+      () => {}
+    ).then(() => {
+      document.getElementById('scannerStatus').textContent = '📷 الكاميرا تعمل. وجه QR نحو الكاميرا';
+    }).catch((err) => {
+      document.getElementById('scannerStatus').textContent = '⚠️ لا يمكن الوصول إلى الكاميرا: ' + err;
+    });
+  } catch (e) {
+    document.getElementById('scannerStatus').textContent = '⚠️ خطأ: ' + e.message;
+  }
+}
+
+function stopScanner() {
+  if (scannerInstance) {
+    try {
+      scannerInstance.stop().then(() => {
+        scannerInstance.clear();
+        scannerInstance = null;
+      }).catch(() => {});
+    } catch (e) { /* ignore */ }
+  }
+}
+
+function onScanSuccess(decodedText) {
+  stopScanner();
+  const resultDiv = document.getElementById('scannerResult');
+  try {
+    const data = JSON.parse(decodedText);
+    if (data.email && data.name) {
+      const users = getUsers();
+      const student = users.find(u => u.email === data.email);
+      if (student) {
+        const records = getAttendance();
+        const today = new Date().toLocaleDateString('ar-EG');
+        const alreadyRecorded = records.some(r => r.studentEmail === data.email && r.date === today);
+        if (alreadyRecorded) {
+          resultDiv.className = 'scanner-result info';
+          resultDiv.textContent = `ℹ️ ${data.name} مسجل حضوره اليوم بالفعل`;
+        } else {
+          const now = new Date();
+          const record = {
+            id: 'a' + Date.now(),
+            studentEmail: data.email,
+            studentName: data.name,
+            date: today,
+            time: now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+            status: 'present'
+          };
+          records.push(record);
+          saveAttendance(records);
+          resultDiv.className = 'scanner-result success';
+          resultDiv.textContent = `✅ تم تسجيل حضور ${data.name}`;
+        }
+      } else {
+        resultDiv.className = 'scanner-result error';
+        resultDiv.textContent = '⚠️ هذا الطالب غير مسجل في النظام';
+      }
+    } else {
+      resultDiv.className = 'scanner-result error';
+      resultDiv.textContent = '⚠️ رمز QR غير صالح';
+    }
+  } catch (e) {
+    resultDiv.className = 'scanner-result error';
+    resultDiv.textContent = '⚠️ رمز QR غير صالح';
+  }
+  document.getElementById('scannerStatus').textContent = '📷 يمكنك إعادة المحاولة بتوجيه QR نحو الكاميرا';
+  setTimeout(() => {
+    startScanner();
+  }, 3000);
+}
+
+// ===== بطاقات الطلاب =====
+function populateCardSelect() {
+  const select = document.getElementById('cardStudentSelect');
+  if (!select) return;
+  const users = getUsers();
+  const curVal = select.value;
+  select.innerHTML = '<option value="">اختر طالباً</option>' + users.map(u => `<option value="${u.email}" ${u.email === curVal ? 'selected' : ''}>${u.name}</option>`).join('');
+  if (curVal) generateStudentCard();
+}
+
+function generateStudentCard() {
+  const container = document.getElementById('studentCardDisplay');
+  const email = document.getElementById('cardStudentSelect').value;
+  if (!email) { container.innerHTML = ''; return; }
+  const users = getUsers();
+  const student = users.find(u => u.email === email);
+  if (!student) { container.innerHTML = ''; return; }
+
+  const qrContainerId = 'cardQR_' + Date.now();
+
+  container.innerHTML = `
+    <div class="student-card" id="studentCard">
+      <div class="card-header">
+        ${student.photo
+          ? `<img src="${student.photo}" alt="${student.name}">`
+          : `<div class="no-photo"><i class="fas fa-user-graduate"></i></div>`}
+        <h3>${student.name}</h3>
+        <p>${student.email}</p>
+        <p style="font-size:11px;opacity:0.7;margin-top:4px;">${student.isAdmin ? 'مسؤول' : 'طالب'}</p>
+      </div>
+      <div class="card-qr"><div id="${qrContainerId}"></div></div>
+      <div class="card-footer">إعدادية القاهرة المهنية الرائدة</div>
+    </div>
+    <button class="admin-add-btn" style="margin-top:16px;" onclick="printStudentCard()"><i class="fas fa-print"></i> طباعة البطاقة</button>
+  `;
+
+  if (typeof QRCode !== 'undefined') {
+    try {
+      new QRCode(document.getElementById(qrContainerId), {
+        text: JSON.stringify({ email: student.email, name: student.name }),
+        width: 100,
+        height: 100,
+        colorDark: '#0d1b2a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch (e) { /* ignore */ }
+  }
+}
+
+function printStudentCard() {
+  const card = document.getElementById('studentCard');
+  if (!card) return;
+  const w = window.open('', '', 'width=400,height=600');
+  w.document.write('<html dir="rtl"><head><style>');
+  w.document.write(document.querySelector('style').textContent);
+  w.document.write('body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}');
+  w.document.write('.student-card{max-width:340px;}</style></head><body>');
+  w.document.write(card.outerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.print();
+}
+
+// ===== أدوات =====
+function closeModal(btn) {
+  const overlay = btn.closest('.modal-overlay');
+  if (overlay) overlay.remove();
+}
+
 // ===== التحقق من الجلسة عند التحميل =====
 document.addEventListener('DOMContentLoaded', () => {
   const user = getCurrentUser();
+  initSampleData();
   if (user) {
     enterApp(user);
   }
