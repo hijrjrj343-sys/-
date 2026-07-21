@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إعدادية القاهرة المهنية الرائدة</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- ===== شاشة تسجيل الدخول ===== -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-container">
+      <div class="auth-logo">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <h1 class="auth-title">إعدادية القاهرة المهنية الرائدة</h1>
+      <p class="auth-subtitle">تسجيل الدخول إلى المنصة التعليمية</p>
+
+      <!-- نموذج تسجيل الدخول -->
+      <form id="loginForm" class="auth-form active-form">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="loginEmail" placeholder="البريد الإلكتروني أو اسم المستخدم" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+          <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+        </div>
+        <button type="submit" class="auth-btn">تسجيل الدخول</button>
+        <p class="auth-switch">ليس لديك حساب؟ <a href="#" onclick="showRegister()">إنشاء حساب جديد</a></p>
+      </form>
+
+      <!-- نموذج إنشاء حساب -->
+      <form id="registerForm" class="auth-form">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="regName" placeholder="الاسم الكامل" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="regPassword" placeholder="كلمة المرور" required>
+          <i class="fas fa-eye toggle-password" onclick="togglePassword('regPassword', this)"></i>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="regConfirm" placeholder="تأكيد كلمة المرور" required>
+        </div>
+        <button type="submit" class="auth-btn">إنشاء الحساب</button>
+        <p class="auth-switch">لديك حساب بالفعل؟ <a href="#" onclick="showLogin()">تسجيل الدخول</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== التطبيق الرئيسي ===== -->
+  <div id="mainApp" class="main-app hidden">
+
+    <!-- الشريط العلوي -->
+    <header class="app-header">
+      <div class="header-content">
+        <i class="fas fa-graduation-cap header-logo"></i>
+        <h2>القاهرة المهنية الرائدة</h2>
+        <i class="fas fa-bell notification-bell"></i>
+      </div>
+    </header>
+
+    <!-- محتوى الصفحات -->
+    <div class="page-content">
+
+      <!-- ===== صفحة الرئيسية ===== -->
+      <section id="page-home" class="page active-page">
+        <div class="welcome-section">
+          <div class="welcome-card">
+            <h3>مرحباً بك في مدرستنا</h3>
+            <p>إعدادية القاهرة المهنية الرائدة - حيث يلتقي العلم بالمهارة</p>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h3>الأقسام المهنية</h3>
+        </div>
+
+        <div class="departments-grid">
+          <div class="dept-card" style="--dept-color: #00bcd4;">
+            <div class="dept-icon"><i class="fas fa-shield-alt"></i></div>
+            <h4>الأمن السيبراني</h4>
+            <p>حماية المعلومات والشبكات من الاختراقات الإلكترونية</p>
+          </div>
+          <div class="dept-card" style="--dept-color: #ff5722;">
+            <div class="dept-icon"><i class="fas fa-desktop"></i></div>
+            <h4>تجميع الحاسوب</h4>
+            <p>صيانة وتجميع مكونات الحاسوب وتشخيص الأعطال</p>
+          </div>
+          <div class="dept-card" style="--dept-color: #4caf50;">
+            <div class="dept-icon"><i class="fas fa-cogs"></i></div>
+            <h4>ميكانيك الأجهزة</h4>
+            <p>صيانة وإصلاح الأجهزة الإلكترونية والميكانيكية</p>
+          </div>
+          <div class="dept-card" style="--dept-color: #9c27b0;">
+            <div class="dept-icon"><i class="fas fa-robot"></i></div>
+            <h4>ميكاترونكس</h4>
+            <p>دمج الهندسة الميكانيكية والكهربائية والإلكترونية</p>
+          </div>
+          <div class="dept-card" style="--dept-color: #e91e63;">
+            <div class="dept-icon"><i class="fas fa-light fa-laser"></i></div>
+            <h4>أدوات الليزر</h4>
+            <p>استخدام تقنيات الليزر في التطبيقات الصناعية والطبية</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== صفحة الأخبار ===== -->
+      <section id="page-news" class="page">
+        <div class="section-title">
+          <h3>آخر الأخبار</h3>
+        </div>
+        <div class="news-list">
+          <div class="news-card">
+            <div class="news-badge">جديد</div>
+            <h4>افتتاح معمل الأمن السيبراني</h4>
+            <p>تم افتتاح أحدث معمل للأمن السيبراني برعاية وزارة التربية</p>
+            <span class="news-date">٢٠ يوليو ٢٠٢٦</span>
+          </div>
+          <div class="news-card">
+            <div class="news-badge">مهم</div>
+            <h4>نتائج الامتحانات النهائية</h4>
+            <p>يمكنكم الآن الاستعلام عن نتائج الامتحانات عبر المنصة</p>
+            <span class="news-date">١٥ يوليو ٢٠٢٦</span>
+          </div>
+          <div class="news-card">
+            <div class="news-badge">فعالية</div>
+            <h4>مسابقة الروبوتات السنوية</h4>
+            <p>تعلن المدرسة عن مسابقة الروبوتات لطلاب قسم الميكاترونكس</p>
+            <span class="news-date">١٠ يوليو ٢٠٢٦</span>
+          </div>
+          <div class="news-card">
+            <div class="news-badge">إعلان</div>
+            <h4>دورة تدريبية في الليزر</h4>
+            <p>تسجيل الآن في الدورة التدريبية المتقدمة لأدوات الليزر</p>
+            <span class="news-date">٥ يوليو ٢٠٢٦</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== صفحة الدردشة ===== -->
+      <section id="page-chat" class="page">
+        <div class="section-title">
+          <h3>الدردشة الجماعية</h3>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg received">
+              <span class="msg-user">مشرف المدرسة</span>
+              <p>مرحباً بكم في غرفة الدردشة المدرسية</p>
+              <span class="msg-time">١٠:٣٠ ص</span>
+            </div>
+            <div class="chat-msg received">
+              <span class="msg-user">أحمد علي</span>
+              <p>هل هناك أي أخبار عن الامتحانات؟</p>
+              <span class="msg-time">١٠:٣١ ص</span>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="اكتب رسالتك..." />
+            <button id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== صفحة حسابي ===== -->
+      <section id="page-account" class="page">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <h3 id="profileName">الطالب</h3>
+          <p id="profileEmail">student@school.com</p>
+        </div>
+        <div class="profile-menu">
+          <div class="profile-item">
+            <i class="fas fa-user-edit"></i>
+            <span>تعديل الملف الشخصي</span>
+            <i class="fas fa-chevron-left"></i>
+          </div>
+          <div class="profile-item">
+            <i class="fas fa-bell"></i>
+            <span>الإشعارات</span>
+            <i class="fas fa-chevron-left"></i>
+          </div>
+          <div class="profile-item">
+            <i class="fas fa-cog"></i>
+            <span>الإعدادات</span>
+            <i class="fas fa-chevron-left"></i>
+          </div>
+          <div class="profile-item" onclick="logout()">
+            <i class="fas fa-sign-out-alt" style="color: #e74c3c;"></i>
+            <span style="color: #e74c3c;">تسجيل الخروج</span>
+            <i class="fas fa-chevron-left" style="color: #e74c3c;"></i>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== القائمة السفلية ===== -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" data-page="home" onclick="navigateTo('home')">
+        <i class="fas fa-home"></i>
+        <span>الرئيسية</span>
+      </div>
+      <div class="nav-item" data-page="news" onclick="navigateTo('news')">
+        <i class="fas fa-newspaper"></i>
+        <span>الأخبار</span>
+      </div>
+      <div class="nav-item" data-page="chat" onclick="navigateTo('chat')">
+        <i class="fas fa-comments"></i>
+        <span>الدردشة</span>
+      </div>
+      <div class="nav-item" data-page="account" onclick="navigateTo('account')">
+        <i class="fas fa-user"></i>
+        <span>حسابي</span>
+      </div>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
