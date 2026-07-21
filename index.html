@@ -87,27 +87,27 @@
         </div>
 
         <div class="departments-grid">
-          <div class="dept-card" style="--dept-color: #00bcd4;">
+          <div class="dept-card" style="--dept-color: #00bcd4;" onclick="openDepartment('cyber')">
             <div class="dept-icon"><i class="fas fa-shield-alt"></i></div>
             <h4>الأمن السيبراني</h4>
             <p>حماية المعلومات والشبكات من الاختراقات الإلكترونية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #ff5722;">
+          <div class="dept-card" style="--dept-color: #ff5722;" onclick="openDepartment('hardware')">
             <div class="dept-icon"><i class="fas fa-desktop"></i></div>
             <h4>تجميع الحاسوب</h4>
             <p>صيانة وتجميع مكونات الحاسوب وتشخيص الأعطال</p>
           </div>
-          <div class="dept-card" style="--dept-color: #4caf50;">
+          <div class="dept-card" style="--dept-color: #4caf50;" onclick="openDepartment('mechanics')">
             <div class="dept-icon"><i class="fas fa-cogs"></i></div>
             <h4>ميكانيك الأجهزة</h4>
             <p>صيانة وإصلاح الأجهزة الإلكترونية والميكانيكية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #9c27b0;">
+          <div class="dept-card" style="--dept-color: #9c27b0;" onclick="openDepartment('mechatronics')">
             <div class="dept-icon"><i class="fas fa-robot"></i></div>
             <h4>ميكاترونكس</h4>
             <p>دمج الهندسة الميكانيكية والكهربائية والإلكترونية</p>
           </div>
-          <div class="dept-card" style="--dept-color: #e91e63;">
+          <div class="dept-card" style="--dept-color: #e91e63;" onclick="openDepartment('laser')">
             <div class="dept-icon"><i class="fas fa-light fa-laser"></i></div>
             <h4>أدوات الليزر</h4>
             <p>استخدام تقنيات الليزر في التطبيقات الصناعية والطبية</p>
@@ -202,6 +202,49 @@
             <i class="fas fa-sign-out-alt" style="color: #e74c3c;"></i>
             <span style="color: #e74c3c;">تسجيل الخروج</span>
             <i class="fas fa-chevron-left" style="color: #e74c3c;"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== صفحة تفاصيل القسم ===== -->
+      <section id="page-department" class="page">
+        <div class="dept-detail-header" id="deptDetailHeader">
+          <button class="back-btn" onclick="closeDepartment()"><i class="fas fa-arrow-right"></i></button>
+          <div class="dept-detail-info">
+            <div class="dept-detail-icon" id="deptDetailIcon"><i class="fas fa-shield-alt"></i></div>
+            <h3 id="deptDetailName">القسم</h3>
+          </div>
+        </div>
+
+        <div class="dept-tabs">
+          <button class="dept-tab active" onclick="switchDeptTab('subjects')" data-tab="subjects">
+            <i class="fas fa-book"></i>
+            <span>المواد الدراسية</span>
+          </button>
+          <button class="dept-tab" onclick="switchDeptTab('schedule')" data-tab="schedule">
+            <i class="fas fa-calendar-alt"></i>
+            <span>الجدول الأسبوعي</span>
+          </button>
+          <button class="dept-tab" onclick="switchDeptTab('grades')" data-tab="grades">
+            <i class="fas fa-star"></i>
+            <span>درجات الامتحانات</span>
+          </button>
+        </div>
+
+        <div class="dept-tab-content">
+          <!-- المواد الدراسية -->
+          <div id="deptSubjects" class="dept-tab-panel active-panel">
+            <div class="subjects-list" id="subjectsList"></div>
+          </div>
+
+          <!-- الجدول الأسبوعي -->
+          <div id="deptSchedule" class="dept-tab-panel">
+            <div class="schedule-container" id="scheduleContainer"></div>
+          </div>
+
+          <!-- درجات الامتحانات -->
+          <div id="deptGrades" class="dept-tab-panel">
+            <div class="grades-container" id="gradesContainer"></div>
           </div>
         </div>
       </section>

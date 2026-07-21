@@ -622,6 +622,329 @@ body {
   font-size: 12px;
 }
 
+/* ===== صفحة تفاصيل القسم ===== */
+.dept-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  margin: -16px -16px 16px;
+  padding: 20px 16px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  color: white;
+}
+
+.back-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+
+.dept-detail-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dept-detail-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dept-detail-icon i {
+  font-size: 22px;
+  color: var(--accent);
+}
+
+.dept-detail-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* التبويبات */
+.dept-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: var(--card-bg);
+  padding: 6px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.dept-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-light);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.dept-tab i {
+  font-size: 18px;
+  transition: all 0.3s;
+}
+
+.dept-tab span {
+  font-size: 10px;
+}
+
+.dept-tab.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(13,27,42,0.25);
+}
+
+.dept-tab.active i {
+  color: var(--accent);
+}
+
+.dept-tab-content {
+  min-height: 300px;
+}
+
+.dept-tab-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.dept-tab-panel.active-panel {
+  display: block;
+}
+
+/* المواد الدراسية */
+.subjects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subject-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.3s;
+  cursor: pointer;
+  border-right: 4px solid var(--subject-color, var(--accent));
+}
+
+.subject-card:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.subject-icon {
+  width: 42px;
+  height: 42px;
+  background: color-mix(in srgb, var(--subject-color, var(--accent)) 15%, transparent);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.subject-icon i {
+  font-size: 18px;
+  color: var(--subject-color, var(--accent));
+}
+
+.subject-info {
+  flex: 1;
+}
+
+.subject-info h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+.subject-info p {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.subject-badge {
+  background: color-mix(in srgb, var(--subject-color, var(--accent)) 12%, transparent);
+  color: var(--subject-color, var(--accent));
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* الجدول الأسبوعي */
+.schedule-container {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.schedule-table thead {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+}
+
+.schedule-table th {
+  color: white;
+  padding: 12px 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.schedule-table td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  color: var(--text);
+}
+
+.schedule-table tr:last-child td {
+  border-bottom: none;
+}
+
+.schedule-table tbody tr {
+  transition: background 0.2s;
+}
+
+.schedule-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.schedule-table .period-label {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 11px;
+}
+
+.schedule-table .period-time {
+  display: block;
+  font-size: 9px;
+  color: var(--text-light);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.subject-tag {
+  display: inline-block;
+  background: color-mix(in srgb, var(--tag-color, var(--accent)) 15%, transparent);
+  color: var(--tag-color, var(--accent));
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* درجات الامتحانات */
+.grades-container {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.grades-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.grades-table thead {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+}
+
+.grades-table th {
+  color: white;
+  padding: 12px 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.grades-table td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  color: var(--text);
+}
+
+.grades-table tr:last-child td {
+  border-bottom: none;
+}
+
+.grades-table tbody tr {
+  transition: background 0.2s;
+}
+
+.grades-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.grade-score {
+  font-weight: 700;
+}
+
+.grade-score.high { color: var(--success); }
+.grade-score.mid { color: var(--accent); }
+.grade-score.low { color: var(--danger); }
+
+.grade-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.grade-status.passed {
+  background: rgba(0,184,148,0.12);
+  color: var(--success);
+}
+
+.grade-status.failed {
+  background: rgba(231,76,60,0.12);
+  color: var(--danger);
+}
+
 /* ===== القائمة السفلية ===== */
 .bottom-nav {
   position: fixed;
