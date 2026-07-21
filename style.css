@@ -89,6 +89,25 @@ body {
   box-shadow: 0 8px 25px rgba(13,27,42,0.3);
 }
 
+.school-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.auth-logo .school-logo {
+  width: 50px;
+  height: 50px;
+}
+
+.header-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .auth-logo i {
   font-size: 36px;
   color: var(--accent);
@@ -766,6 +785,44 @@ body {
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
+/* أزرار المراحل (الأولى - الثانية - الثالثة) */
+.stage-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.stage-tab {
+  flex: 1;
+  padding: 10px 8px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  text-align: center;
+}
+
+.stage-tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.stage-tab.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(13,27,42,0.2);
+}
+
+.stage-tab i {
+  margin-left: 6px;
+}
+
 .subject-icon {
   width: 42px;
   height: 42px;
@@ -805,6 +862,28 @@ body {
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 20px;
+}
+
+.subject-download {
+  width: 36px;
+  height: 36px;
+  background: rgba(231,76,60,0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.subject-download i {
+  font-size: 16px;
+  color: var(--danger);
+}
+
+.subject-card:hover .subject-download {
+  background: rgba(231,76,60,0.2);
+  transform: scale(1.1);
 }
 
 /* الجدول الأسبوعي */

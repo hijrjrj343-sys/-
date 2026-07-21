@@ -142,19 +142,35 @@ function navigateTo(page) {
   if (targetNav) targetNav.classList.add('active');
 }
 
-// ===== بيانات الأقسام المهنية =====
+// ===== بيانات الأقسام المهنية (مراحل + روابط PDF) =====
 const departmentsData = {
   cyber: {
     name: 'الأمن السيبراني',
     icon: 'fa-shield-alt',
     color: '#00bcd4',
-    subjects: [
-      { name: 'أمن الشبكات', desc: 'حماية البنية التحتية للشبكات من الهجمات', icon: 'fa-network-wired' },
-      { name: 'تشفير البيانات', desc: 'تقنيات التشفير لحماية المعلومات الحساسة', icon: 'fa-key' },
-      { name: 'اختبار الاختراق', desc: 'تحليل الثغرات واختبار أمان الأنظمة', icon: 'fa-bug' },
-      { name: 'أنظمة التشغيل الآمنة', desc: 'إعداد وتأمين أنظمة التشغيل المختلفة', icon: 'fa-terminal' },
-      { name: 'قوانين وأخلاقيات الإنترنت', desc: 'الجوانب القانونية والأخلاقية في الفضاء الرقمي', icon: 'fa-gavel' }
-    ],
+    stages: {
+      first: [
+        { name: 'أساسيات الحاسوب', desc: 'مبادئ الحاسوب ونظام التشغيل', icon: 'fa-laptop', pdf: '#' },
+        { name: 'مقدمة في الشبكات', desc: 'أساسيات الشبكات والمفاهيم الأولية', icon: 'fa-project-diagram', pdf: '#' },
+        { name: 'أخلاقيات الإنترنت', desc: 'القيم والسلوكيات في الفضاء الرقمي', icon: 'fa-gavel', pdf: '#' },
+        { name: 'اللغة الإنجليزية', desc: 'مصطلحات تقنية باللغة الإنجليزية', icon: 'fa-language', pdf: '#' },
+        { name: 'الرياضيات', desc: 'أساسيات الرياضيات للحاسوب', icon: 'fa-calculator', pdf: '#' }
+      ],
+      second: [
+        { name: 'أمن الشبكات', desc: 'حماية البنية التحتية للشبكات من الهجمات', icon: 'fa-network-wired', pdf: '#' },
+        { name: 'تشفير البيانات', desc: 'تقنيات التشفير لحماية المعلومات', icon: 'fa-key', pdf: '#' },
+        { name: 'أنظمة التشغيل الآمنة', desc: 'إعداد وتأمين أنظمة التشغيل', icon: 'fa-terminal', pdf: '#' },
+        { name: 'قواعد البيانات', desc: 'إدارة وحماية قواعد البيانات', icon: 'fa-database', pdf: '#' },
+        { name: 'برمجة بايثون', desc: 'أساسيات البرمجة بلغة بايثون', icon: 'fa-code', pdf: '#' }
+      ],
+      third: [
+        { name: 'اختبار الاختراق', desc: 'تحليل الثغرات واختبار أمان الأنظمة', icon: 'fa-bug', pdf: '#' },
+        { name: 'تحليل البرمجيات الخبيثة', desc: 'كشف وتحليل البرمجيات الضارة', icon: 'fa-skull', pdf: '#' },
+        { name: 'أمن التطبيقات', desc: 'تأمين تطبيقات الويب والموبايل', icon: 'fa-shield-halved', pdf: '#' },
+        { name: 'إدارة الحوادث', desc: 'التعامل مع الاختراقات والاستجابة لها', icon: 'fa-bell-exclamation', pdf: '#' },
+        { name: 'مشروع التخرج', desc: 'تطبيق عملي شامل في الأمن السيبراني', icon: 'fa-certificate', pdf: '#' }
+      ]
+    },
     schedule: [
       { period: 'الحصة الأولى', time: '٨:٠٠ - ٨:٤٥', days: { sun: 'أمن الشبكات', mon: 'تشفير', tue: 'أمن الشبكات', wed: 'اختبار اختراق', thu: 'قوانين' } },
       { period: 'الحصة الثانية', time: '٨:٤٥ - ٩:٣٠', days: { sun: 'تشفير', mon: 'أمن الشبكات', tue: 'تشفير', wed: 'أمن الشبكات', thu: 'اختبار اختراق' } },
@@ -182,13 +198,29 @@ const departmentsData = {
     name: 'تجميع الحاسوب',
     icon: 'fa-desktop',
     color: '#ff5722',
-    subjects: [
-      { name: 'صيانة الحاسوب', desc: 'تشخيص وإصلاح أعطال الحاسوب', icon: 'fa-tools' },
-      { name: 'شبكات الحاسوب', desc: 'ربط وتكوين الشبكات المحلية', icon: 'fa-project-diagram' },
-      { name: 'تركيب الأنظمة', desc: 'تنصيب وتكوين أنظمة التشغيل', icon: 'fa-download' },
-      { name: 'إلكترونيات الحاسوب', desc: 'أساسيات الدوائر الإلكترونية في الحاسوب', icon: 'fa-microchip' },
-      { name: 'تشخيص الأعطال', desc: 'استخدام أدوات التشخيص لتحديد المشكلات', icon: 'fa-stethoscope' }
-    ],
+    stages: {
+      first: [
+        { name: 'أساسيات الكهرباء', desc: 'مبادئ الكهرباء والتيار المستمر', icon: 'fa-bolt', pdf: '#' },
+        { name: 'مكونات الحاسوب', desc: 'التعرف على مكونات الحاسوب الأساسية', icon: 'fa-microchip', pdf: '#' },
+        { name: 'اللغة الإنجليزية', desc: 'مصطلحات تقنية باللغة الإنجليزية', icon: 'fa-language', pdf: '#' },
+        { name: 'الرياضيات', desc: 'أساسيات الرياضيات للحاسوب', icon: 'fa-calculator', pdf: '#' },
+        { name: 'مقدمة في الصيانة', desc: 'أساسيات الصيانة الوقائية', icon: 'fa-wrench', pdf: '#' }
+      ],
+      second: [
+        { name: 'صيانة الحاسوب', desc: 'تشخيص وإصلاح أعطال الحاسوب', icon: 'fa-tools', pdf: '#' },
+        { name: 'شبكات الحاسوب', desc: 'ربط وتكوين الشبكات المحلية', icon: 'fa-project-diagram', pdf: '#' },
+        { name: 'تركيب الأنظمة', desc: 'تنصيب وتكوين أنظمة التشغيل', icon: 'fa-download', pdf: '#' },
+        { name: 'إلكترونيات الحاسوب', desc: 'أساسيات الدوائر الإلكترونية', icon: 'fa-microchip', pdf: '#' },
+        { name: 'صيانة الطابعات', desc: 'إصلاح وصيانة الطابعات والماسحات', icon: 'fa-print', pdf: '#' }
+      ],
+      third: [
+        { name: 'تشخيص الأعطال', desc: 'استخدام أدوات التشخيص المتقدمة', icon: 'fa-stethoscope', pdf: '#' },
+        { name: 'صيانة اللوحات الأم', desc: 'إصلاح اللوحات الأم ومعالجة الأعطال', icon: 'fa-server', pdf: '#' },
+        { name: 'صيانة أجهزة المحمول', desc: 'إصلاح وصيانة أجهزة اللابتوب', icon: 'fa-laptop', pdf: '#' },
+        { name: 'إدارة المشاريع', desc: 'إدارة مشاريع الصيانة وخدمة العملاء', icon: 'fa-chart-line', pdf: '#' },
+        { name: 'مشروع التخرج', desc: 'مشروع شامل في تجميع وصيانة الحاسوب', icon: 'fa-certificate', pdf: '#' }
+      ]
+    },
     schedule: [
       { period: 'الحصة الأولى', time: '٨:٠٠ - ٨:٤٥', days: { sun: 'صيانة', mon: 'شبكات', tue: 'صيانة', wed: 'إلكترونيات', thu: 'تشخيص' } },
       { period: 'الحصة الثانية', time: '٨:٤٥ - ٩:٣٠', days: { sun: 'شبكات', mon: 'صيانة', tue: 'تركيب أنظمة', wed: 'صيانة', thu: 'إلكترونيات' } },
@@ -216,13 +248,29 @@ const departmentsData = {
     name: 'ميكانيك الأجهزة',
     icon: 'fa-cogs',
     color: '#4caf50',
-    subjects: [
-      { name: 'ميكانيكا عامة', desc: 'أساسيات الميكانيكا والقوى الحركية', icon: 'fa-wrench' },
-      { name: 'كهرباء الأجهزة', desc: 'الدوائر الكهربائية في الأجهزة المنزلية', icon: 'fa-bolt' },
-      { name: 'تبريد وتكييف', desc: 'أنظمة التبريد وتكييف الهواء', icon: 'fa-snowflake' },
-      { name: 'صيانة الأجهزة', desc: 'إصلاح وصيانة الأجهزة الكهربائية', icon: 'fa-tools' },
-      { name: 'رسم هندسي', desc: 'الرسم الفني والمخططات الهندسية', icon: 'fa-drafting-compass' }
-    ],
+    stages: {
+      first: [
+        { name: 'أساسيات الميكانيكا', desc: 'مبادئ الميكانيكا والقوى الحركية', icon: 'fa-wrench', pdf: '#' },
+        { name: 'الرسم الهندسي', desc: 'أساسيات الرسم الفني الهندسي', icon: 'fa-drafting-compass', pdf: '#' },
+        { name: 'الرياضيات التطبيقية', desc: 'تطبيقات الرياضيات في الميكانيكا', icon: 'fa-calculator', pdf: '#' },
+        { name: 'اللغة الإنجليزية', desc: 'مصطلحات هندسية باللغة الإنجليزية', icon: 'fa-language', pdf: '#' },
+        { name: 'سلامة مهنية', desc: 'إجراءات السلامة في ورش العمل', icon: 'fa-hard-hat', pdf: '#' }
+      ],
+      second: [
+        { name: 'ميكانيكا عامة', desc: 'دراسة متقدمة في الميكانيكا', icon: 'fa-cog', pdf: '#' },
+        { name: 'كهرباء الأجهزة', desc: 'الدوائر الكهربائية في الأجهزة المنزلية', icon: 'fa-bolt', pdf: '#' },
+        { name: 'تبريد وتكييف', desc: 'أنظمة التبريد وتكييف الهواء', icon: 'fa-snowflake', pdf: '#' },
+        { name: 'هيدروليك ونيوماتيك', desc: 'أنظمة الهيدروليك والضغط', icon: 'fa-water', pdf: '#' },
+        { name: 'ورشة ميكانيكا', desc: 'تطبيقات عملية في الميكانيكا', icon: 'fa-industry', pdf: '#' }
+      ],
+      third: [
+        { name: 'صيانة الأجهزة', desc: 'إصلاح وصيانة الأجهزة الكهربائية', icon: 'fa-tools', pdf: '#' },
+        { name: 'محركات كهربائية', desc: 'صيانة وإصلاح المحركات الكهربائية', icon: 'fa-motor', pdf: '#' },
+        { name: 'أجهزة قياس', desc: 'استخدام أجهزة القياس في التشخيص', icon: 'fa-ruler', pdf: '#' },
+        { name: 'إدارة ورش', desc: 'إدارة وتنظيم ورش الصيانة', icon: 'fa-clipboard-list', pdf: '#' },
+        { name: 'مشروع التخرج', desc: 'مشروع شامل في ميكانيك الأجهزة', icon: 'fa-certificate', pdf: '#' }
+      ]
+    },
     schedule: [
       { period: 'الحصة الأولى', time: '٨:٠٠ - ٨:٤٥', days: { sun: 'ميكانيكا', mon: 'كهرباء', tue: 'تبريد', wed: 'صيانة', thu: 'رسم' } },
       { period: 'الحصة الثانية', time: '٨:٤٥ - ٩:٣٠', days: { sun: 'كهرباء', mon: 'ميكانيكا', tue: 'صيانة', wed: 'تبريد', thu: 'ميكانيكا' } },
@@ -250,13 +298,29 @@ const departmentsData = {
     name: 'ميكاترونكس',
     icon: 'fa-robot',
     color: '#9c27b0',
-    subjects: [
-      { name: 'إلكترونيات', desc: 'الدوائر الإلكترونية المتكاملة', icon: 'fa-microchip' },
-      { name: 'برمجة تحكم', desc: 'برمجة وحدات التحكم المنطقي PLC', icon: 'fa-code' },
-      { name: 'روبوتات', desc: 'تصميم وبرمجة الروبوتات الذكية', icon: 'fa-robot' },
-      { name: 'استشعار وتحكم', desc: 'أنظمة الاستشعار والتحكم الآلي', icon: 'fa-sliders-h' },
-      { name: 'ميكانيكا دقيقة', desc: 'الميكانيكا الدقيقة والأنظمة المدمجة', icon: 'fa-cog' }
-    ],
+    stages: {
+      first: [
+        { name: 'أساسيات الإلكترونيات', desc: 'مبادئ الإلكترونيات والدوائر', icon: 'fa-microchip', pdf: '#' },
+        { name: 'الرسم الهندسي', desc: 'الرسم الفني والمخططات الكهربائية', icon: 'fa-drafting-compass', pdf: '#' },
+        { name: 'الرياضيات', desc: 'الرياضيات للمهندسين', icon: 'fa-calculator', pdf: '#' },
+        { name: 'الفيزياء', desc: 'مبادئ الفيزياء التطبيقية', icon: 'fa-atom', pdf: '#' },
+        { name: 'اللغة الإنجليزية', desc: 'مصطلحات هندسية بالإنجليزية', icon: 'fa-language', pdf: '#' }
+      ],
+      second: [
+        { name: 'إلكترونيات', desc: 'الدوائر الإلكترونية المتكاملة', icon: 'fa-microchip', pdf: '#' },
+        { name: 'برمجة تحكم', desc: 'برمجة وحدات التحكم المنطقي PLC', icon: 'fa-code', pdf: '#' },
+        { name: 'استشعار وتحكم', desc: 'أنظمة الاستشعار والتحكم الآلي', icon: 'fa-sliders-h', pdf: '#' },
+        { name: 'ميكانيكا دقيقة', desc: 'الميكانيكا الدقيقة والأنظمة المدمجة', icon: 'fa-cog', pdf: '#' },
+        { name: 'دوائر رقمية', desc: 'تصميم الدوائر الرقمية', icon: 'fa-circle-nodes', pdf: '#' }
+      ],
+      third: [
+        { name: 'روبوتات', desc: 'تصميم وبرمجة الروبوتات الذكية', icon: 'fa-robot', pdf: '#' },
+        { name: 'أنظمة مضمنة', desc: 'تصميم الأنظمة المضمنة والمتحكمات', icon: 'fa-chip', pdf: '#' },
+        { name: 'ذكاء اصطناعي', desc: 'تطبيقات الذكاء الاصطناعي في الميكاترونكس', icon: 'fa-brain', pdf: '#' },
+        { name: 'أتمتة صناعية', desc: 'أنظمة الأتمتة والتحكم الصناعي', icon: 'fa-industry', pdf: '#' },
+        { name: 'مشروع التخرج', desc: 'مشروع شامل في الميكاترونكس والروبوتات', icon: 'fa-certificate', pdf: '#' }
+      ]
+    },
     schedule: [
       { period: 'الحصة الأولى', time: '٨:٠٠ - ٨:٤٥', days: { sun: 'إلكترونيات', mon: 'برمجة', tue: 'روبوتات', wed: 'استشعار', thu: 'ميكانيكا' } },
       { period: 'الحصة الثانية', time: '٨:٤٥ - ٩:٣٠', days: { sun: 'برمجة', mon: 'إلكترونيات', tue: 'استشعار', wed: 'روبوتات', thu: 'برمجة' } },
@@ -284,13 +348,29 @@ const departmentsData = {
     name: 'أدوات الليزر',
     icon: 'fa-light fa-laser',
     color: '#e91e63',
-    subjects: [
-      { name: 'فيزياء الليزر', desc: 'أساسيات فيزياء الليزر والضوء', icon: 'fa-lightbulb' },
-      { name: 'تطبيقات الليزر', desc: 'استخدامات الليزر في الصناعة والطب', icon: 'fa-industry' },
-      { name: 'أمن وسلامة الليزر', desc: 'إجراءات السلامة عند التعامل مع الليزر', icon: 'fa-hard-hat' },
-      { name: 'بصريات', desc: 'المبادئ البصرية في أنظمة الليزر', icon: 'fa-eye' },
-      { name: 'صيانة أجهزة الليزر', desc: 'تشخيص وإصلاح أعطال أجهزة الليزر', icon: 'fa-screwdriver' }
-    ],
+    stages: {
+      first: [
+        { name: 'أساسيات البصريات', desc: 'مبادئ الضوء والبصريات', icon: 'fa-eye', pdf: '#' },
+        { name: 'الفيزياء العامة', desc: 'أساسيات الفيزياء التطبيقية', icon: 'fa-atom', pdf: '#' },
+        { name: 'الرياضيات', desc: 'الرياضيات للتخصصات التقنية', icon: 'fa-calculator', pdf: '#' },
+        { name: 'اللغة الإنجليزية', desc: 'مصطلحات علمية بالإنجليزية', icon: 'fa-language', pdf: '#' },
+        { name: 'سلامة مهنية', desc: 'إجراءات السلامة في مختبرات الليزر', icon: 'fa-hard-hat', pdf: '#' }
+      ],
+      second: [
+        { name: 'فيزياء الليزر', desc: 'أساسيات فيزياء الليزر والضوء', icon: 'fa-lightbulb', pdf: '#' },
+        { name: 'بصريات', desc: 'المبادئ البصرية في أنظمة الليزر', icon: 'fa-eye', pdf: '#' },
+        { name: 'إلكترونيات الليزر', desc: 'الدوائر الإلكترونية في أجهزة الليزر', icon: 'fa-microchip', pdf: '#' },
+        { name: 'مختبر الليزر', desc: 'تطبيقات عملية في مختبر الليزر', icon: 'fa-flask', pdf: '#' },
+        { name: 'أمن وسلامة الليزر', desc: 'إجراءات السلامة عند التعامل مع الليزر', icon: 'fa-shield-halved', pdf: '#' }
+      ],
+      third: [
+        { name: 'تطبيقات الليزر', desc: 'استخدامات الليزر في الصناعة والطب', icon: 'fa-industry', pdf: '#' },
+        { name: 'صيانة أجهزة الليزر', desc: 'تشخيص وإصلاح أعطال أجهزة الليزر', icon: 'fa-screwdriver', pdf: '#' },
+        { name: 'ليزر في الاتصالات', desc: 'تطبيقات الليزر في الاتصالات البصرية', icon: 'fa-satellite-dish', pdf: '#' },
+        { name: 'قياسات بصرية', desc: 'تقنيات القياس باستخدام الليزر', icon: 'fa-ruler-combined', pdf: '#' },
+        { name: 'مشروع التخرج', desc: 'مشروع شامل في تطبيقات الليزر', icon: 'fa-certificate', pdf: '#' }
+      ]
+    },
     schedule: [
       { period: 'الحصة الأولى', time: '٨:٠٠ - ٨:٤٥', days: { sun: 'فيزياء', mon: 'تطبيقات', tue: 'أمن', wed: 'بصريات', thu: 'صيانة' } },
       { period: 'الحصة الثانية', time: '٨:٤٥ - ٩:٣٠', days: { sun: 'تطبيقات', mon: 'فيزياء', tue: 'بصريات', wed: 'أمن', thu: 'تطبيقات' } },
@@ -326,36 +406,20 @@ const dayNames = {
 
 const dayOrder = ['sun', 'mon', 'tue', 'wed', 'thu'];
 
-const subjectIcons = {
-  'أمن الشبكات': 'fa-network-wired',
-  'تشفير': 'fa-key',
-  'اختبار اختراق': 'fa-bug',
-  'أنظمة آمنة': 'fa-terminal',
-  'قوانين': 'fa-gavel',
-  'تطبيقات': 'fa-flask',
-  'صيانة': 'fa-tools',
-  'شبكات': 'fa-project-diagram',
-  'تركيب أنظمة': 'fa-download',
-  'إلكترونيات': 'fa-microchip',
-  'تشخيص': 'fa-stethoscope',
-  'ميكانيكا': 'fa-wrench',
-  'كهرباء': 'fa-bolt',
-  'تبريد': 'fa-snowflake',
-  'رسم': 'fa-drafting-compass',
-  'برمجة': 'fa-code',
-  'روبوتات': 'fa-robot',
-  'استشعار': 'fa-sliders-h',
-  'ميكانيكا': 'fa-cog',
-  'فيزياء': 'fa-lightbulb',
-  'بصريات': 'fa-eye',
-  'أمن': 'fa-hard-hat'
+const stageLabels = {
+  first: 'المرحلة الأولى',
+  second: 'المرحلة الثانية',
+  third: 'المرحلة الثالثة'
 };
 
-function getSubjectIcon(name) {
-  return subjectIcons[name] || 'fa-book';
-}
+const stageIcons = {
+  first: 'fa-1',
+  second: 'fa-2',
+  third: 'fa-3'
+};
 
-// ===== فتح صفحة القسم =====
+let currentStage = 'first';
+
 function openDepartment(id) {
   const data = departmentsData[id];
   if (!data) return;
@@ -371,6 +435,8 @@ function openDepartment(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
   document.getElementById('page-department').classList.add('active-page');
 
+  currentStage = 'first';
+  renderStageTabs(data);
   renderSubjects(data);
   renderSchedule(data);
   renderGrades(data);
@@ -378,20 +444,53 @@ function openDepartment(id) {
   switchDeptTab('subjects');
 }
 
+function renderStageTabs(data) {
+  const container = document.getElementById('stageTabs');
+  container.innerHTML = ['first', 'second', 'third'].map(key => `
+    <button class="stage-tab ${key === currentStage ? 'active' : ''}" onclick="switchStage('${key}')">
+      <i class="fas ${stageIcons[key]}"></i> ${stageLabels[key]}
+    </button>
+  `).join('');
+}
+
+function switchStage(key) {
+  currentStage = key;
+  const data = getCurrentDepartmentData();
+  if (!data) return;
+  renderStageTabs(data);
+  renderSubjects(data);
+}
+
+function getCurrentDepartmentData() {
+  const name = document.getElementById('deptDetailName').textContent;
+  return Object.values(departmentsData).find(d => d.name === name);
+}
+
 function renderSubjects(data) {
   const list = document.getElementById('subjectsList');
+  const subjects = data.stages[currentStage];
+  if (!subjects) { list.innerHTML = ''; return; }
+
   const colors = ['#00bcd4', '#ff5722', '#4caf50', '#9c27b0', '#e91e63'];
 
-  list.innerHTML = data.subjects.map((s, i) => `
-    <div class="subject-card" style="--subject-color: ${colors[i % colors.length]}">
+  list.innerHTML = subjects.map((s, i) => `
+    <div class="subject-card" style="--subject-color: ${colors[i % colors.length]}" onclick="openPDF('${encodeURIComponent(s.pdf)}')">
       <div class="subject-icon"><i class="fas ${s.icon}"></i></div>
       <div class="subject-info">
         <h4>${s.name}</h4>
         <p>${s.desc}</p>
       </div>
-      <span class="subject-badge">${i + 1}</span>
+      <div class="subject-download"><i class="fas fa-file-pdf"></i></div>
     </div>
   `).join('');
+}
+
+function openPDF(url) {
+  if (url === '#' || !url) {
+    showToast('📚 سيتم إضافة رابط تحميل PDF قريباً');
+    return;
+  }
+  window.open(url, '_blank');
 }
 
 function renderSchedule(data) {
@@ -425,27 +524,13 @@ function renderSchedule(data) {
 
 function getSubjectColor(name, defaultColor) {
   const colors = {
-    'أمن الشبكات': '#00bcd4',
-    'تشفير': '#9c27b0',
-    'اختبار اختراق': '#e91e63',
-    'أنظمة آمنة': '#4caf50',
-    'قوانين': '#ff9800',
-    'تطبيقات': '#607d8b',
-    'صيانة': '#ff5722',
-    'شبكات': '#2196f3',
-    'تركيب أنظمة': '#795548',
-    'إلكترونيات': '#3f51b5',
-    'تشخيص': '#009688',
-    'ميكانيكا': '#4caf50',
-    'كهرباء': '#ffc107',
-    'تبريد': '#00bcd4',
-    'رسم': '#9e9e9e',
-    'برمجة': '#673ab7',
-    'روبوتات': '#9c27b0',
-    'استشعار': '#03a9f4',
-    'فيزياء': '#e91e63',
-    'بصريات': '#00bcd4',
-    'أمن': '#ff9800'
+    'أمن الشبكات': '#00bcd4', 'تشفير': '#9c27b0', 'اختبار اختراق': '#e91e63',
+    'أنظمة آمنة': '#4caf50', 'قوانين': '#ff9800', 'تطبيقات': '#607d8b',
+    'صيانة': '#ff5722', 'شبكات': '#2196f3', 'تركيب أنظمة': '#795548',
+    'إلكترونيات': '#3f51b5', 'تشخيص': '#009688', 'ميكانيكا': '#4caf50',
+    'كهرباء': '#ffc107', 'تبريد': '#00bcd4', 'رسم': '#9e9e9e',
+    'برمجة': '#673ab7', 'روبوتات': '#9c27b0', 'استشعار': '#03a9f4',
+    'فيزياء': '#e91e63', 'بصريات': '#00bcd4', 'أمن': '#ff9800'
   };
   return colors[name] || defaultColor;
 }
