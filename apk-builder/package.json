@@ -1,0 +1,24 @@
+{
+  "name": "com.cairo.school",
+  "displayName": "القاهرة المهنية",
+  "version": "1.0.0",
+  "description": "إعدادية القاهرة المهنية الرائدة",
+  "main": "index.js",
+  "scripts": {
+    "build": "cordova build android",
+    "emulate": "cordova emulate android",
+    "run": "cordova run android",
+    "add-android": "cordova platform add android",
+    "prep": "cp -r www/* ../ && echo 'تم نقل الملفات'"
+  },
+  "dependencies": {
+    "cordova-android": "^12.0.0",
+    "cordova-plugin-statusbar": "^4.0.0"
+  },
+  "cordova": {
+    "platforms": ["android"],
+    "plugins": {
+      "cordova-plugin-statusbar": {}
+    }
+  }
+}

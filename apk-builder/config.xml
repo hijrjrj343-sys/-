@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.cairo.school" version="1.0.0"
+        xmlns="http://www.w3.org/ns/widgets"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0">
+
+  <name>القاهرة المهنية</name>
+  <description>إعدادية القاهرة المهنية الرائدة - المنصة التعليمية</description>
+  <author email="admin@school.com">إعدادية القاهرة المهنية</author>
+
+  <content src="index.html" />
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+
+  <preference name="Orientation" value="portrait" />
+  <preference name="Fullscreen" value="false" />
+  <preference name="DisallowOverscroll" value="true" />
+  <preference name="BackgroundColor" value="#0d1b2a" />
+  <preference name="StatusBarOverlaysWebView" value="false" />
+  <preference name="StatusBarBackgroundColor" value="#0d1b2a" />
+  <preference name="hostname" value="localhost" />
+
+  <platform name="android">
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+      <application android:usesCleartextTraffic="true" />
+    </edit-config>
+    <icon src="res/icon.png" density="mdpi" />
+    <icon src="res/icon.png" density="hdpi" />
+    <icon src="res/icon.png" density="xhdpi" />
+    <icon src="res/icon.png" density="xxhdpi" />
+    <icon src="res/icon.png" density="xxxhdpi" />
+  </platform>
+</widget>
