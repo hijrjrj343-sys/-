@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - إعدادية القاهرة المهنية</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ===== شاشة تسجيل الدخول ===== -->
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-box">
+        <div class="auth-logo"><i class="fas fa-graduation-cap"></i></div>
+        <h2>لوحة التحكم</h2>
+        <p class="auth-sub">إعدادية القاهرة المهنية الرائدة</p>
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+          </div>
+          <button type="submit" class="btn-primary">تسجيل الدخول</button>
+          <p class="error-msg" id="loginError"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== لوحة التحكم الرئيسية ===== -->
+    <div id="dashboard" class="dashboard hidden">
+      <!-- الشريط الجانبي -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <i class="fas fa-graduation-cap"></i>
+          <span>التحكم</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" data-page="overview"><i class="fas fa-chart-pie"></i><span>الإحصائيات</span></a>
+          <a class="nav-item" data-page="students"><i class="fas fa-users"></i><span>الطلاب</span></a>
+          <a class="nav-item" data-page="news"><i class="fas fa-newspaper"></i><span>الأخبار</span></a>
+          <a class="nav-item" data-page="exams"><i class="fas fa-file-alt"></i><span>الامتحانات</span></a>
+          <a class="nav-item" data-page="attendance"><i class="fas fa-clipboard-check"></i><span>الحضور</span></a>
+          <a class="nav-item" data-page="cards"><i class="fas fa-id-card"></i><span>البطاقات</span></a>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="admin-info" id="adminInfo">
+            <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+            <div class="admin-details">
+              <span id="adminName">المشرف</span>
+              <span id="adminRole">مسؤول النظام</span>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+      </aside>
+
+      <!-- المحتوى الرئيسي -->
+      <main class="main-content">
+        <!-- الشريط العلوي -->
+        <header class="topbar">
+          <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+          <h3 id="pageTitle">الإحصائيات</h3>
+          <div class="topbar-left">
+            <a href="/" class="btn-outline-sm" target="_blank"><i class="fas fa-external-link-alt"></i> التطبيق</a>
+            <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+          </div>
+        </header>
+
+        <div class="content-body">
+          <!-- ===== الإحصائيات ===== -->
+          <section id="page-overview" class="page active">
+            <div class="stats-grid" id="statsGrid">
+              <div class="stat-card" style="--stat-color:#d4a843">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statStudents">0</span><span class="stat-label">الطلاب</span></div>
+              </div>
+              <div class="stat-card" style="--stat-color:#00bcd4">
+                <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statNews">0</span><span class="stat-label">الأخبار</span></div>
+              </div>
+              <div class="stat-card" style="--stat-color:#4caf50">
+                <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statExams">0</span><span class="stat-label">الامتحانات</span></div>
+              </div>
+              <div class="stat-card" style="--stat-color:#9c27b0">
+                <div class="stat-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statAttendance">0</span><span class="stat-label">تسجيل حضور</span></div>
+              </div>
+              <div class="stat-card" style="--stat-color:#ff5722">
+                <div class="stat-icon"><i class="fas fa-id-card"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statCards">0</span><span class="stat-label">البطاقات</span></div>
+              </div>
+              <div class="stat-card" style="--stat-color:#e91e63">
+                <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                <div class="stat-info"><span class="stat-number" id="statMessages">0</span><span class="stat-label">الرسائل</span></div>
+              </div>
+            </div>
+            <div class="overview-sections">
+              <div class="overview-card">
+                <div class="overview-header"><h4><i class="fas fa-clock"></i> آخر الأخبار</h4></div>
+                <div id="overviewNews" class="overview-list"></div>
+              </div>
+              <div class="overview-card">
+                <div class="overview-header"><h4><i class="fas fa-calendar-check"></i> آخر تسجيلات الحضور</h4></div>
+                <div id="overviewAttendance" class="overview-list"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== الطلاب ===== -->
+          <section id="page-students" class="page">
+            <div class="panel-header">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="studentSearch" placeholder="بحث عن طالب..." oninput="renderStudents()">
+              </div>
+              <button class="btn-primary" onclick="exportStudents()"><i class="fas fa-download"></i> تصدير</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead><tr>
+                  <th>#</th><th>الصورة</th><th>الاسم</th><th>البريد</th><th>الدور</th><th>تاريخ التسجيل</th><th>حضور</th><th>الإجراءات</th>
+                </tr></thead>
+                <tbody id="studentsTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===== الأخبار ===== -->
+          <section id="page-news" class="page">
+            <div class="panel-header">
+              <button class="btn-primary" onclick="showNewsModal()"><i class="fas fa-plus"></i> خبر جديد</button>
+            </div>
+            <div id="newsList" class="data-cards"></div>
+          </section>
+
+          <!-- ===== الامتحانات ===== -->
+          <section id="page-exams" class="page">
+            <div class="panel-header">
+              <div class="filter-group">
+                <select id="examDeptFilter" onchange="renderExams()">
+                  <option value="">كل الأقسام</option>
+                  <option value="cyber">الأمن السيبراني</option>
+                  <option value="hardware">تجميع الحاسوب</option>
+                  <option value="mechanics">ميكانيك الأجهزة</option>
+                  <option value="mechatronics">ميكاترونكس</option>
+                  <option value="laser">أدوات الليزر</option>
+                </select>
+                <select id="examStageFilter" onchange="renderExams()">
+                  <option value="">كل المراحل</option>
+                  <option value="first">المرحلة الأولى</option>
+                  <option value="second">المرحلة الثانية</option>
+                  <option value="third">المرحلة الثالثة</option>
+                </select>
+              </div>
+              <button class="btn-primary" onclick="showExamModal()"><i class="fas fa-plus"></i> امتحان جديد</button>
+            </div>
+            <div id="examsList" class="data-cards"></div>
+          </section>
+
+          <!-- ===== الحضور ===== -->
+          <section id="page-attendance" class="page">
+            <div class="panel-header">
+              <div class="filter-group">
+                <input type="date" id="attendanceDate" onchange="renderAttendance()">
+                <select id="attendanceDeptFilter" onchange="renderAttendance()">
+                  <option value="">كل الأقسام</option>
+                </select>
+              </div>
+              <button class="btn-primary" onclick="exportAttendance()"><i class="fas fa-download"></i> تصدير</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead><tr><th>#</th><th>الطالب</th><th>البريد</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th></tr></thead>
+                <tbody id="attendanceTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===== البطاقات ===== -->
+          <section id="page-cards" class="page">
+            <div class="panel-header">
+              <select id="cardStudentSelect" onchange="generateCard()">
+                <option value="">اختر طالباً</option>
+              </select>
+              <button class="btn-primary" onclick="printCard()"><i class="fas fa-print"></i> طباعة</button>
+            </div>
+            <div id="cardPreview" class="card-preview"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===== Modal ===== -->
+    <div id="modal" class="modal hidden">
+      <div class="modal-overlay" onclick="closeModal()"></div>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="modalTitle">عنوان</h3>
+          <button class="modal-x" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
